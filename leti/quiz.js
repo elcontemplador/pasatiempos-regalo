@@ -34,7 +34,7 @@ export function initQuiz(){
  function renderTopics(){
   const root=$('quiz-topics'),focused=root.contains(document.activeElement)?document.activeElement.dataset.quizTopic:null;root.replaceChildren();
   quizTopics.forEach(t=>{const b=document.createElement('button');b.className='theme-button'+(topic.id===t.id?' active':'');b.dataset.quizTopic=t.id;b.setAttribute('aria-pressed',String(topic.id===t.id));
-   const label=document.createElement('span');label.textContent=t.title;const small=document.createElement('small');small.textContent=`${t.questions.length} preguntas`;label.append(small);b.innerHTML=icon({salamanca:'pin',campos:'sprout',deporte:'cup',recuerdos:'tv',rincones:'map',refranes:'chat'}[t.id]);b.append(label);
+   const label=document.createElement('span');label.textContent=t.title;const small=document.createElement('small');small.textContent=`${t.questions.length} preguntas`;label.append(small);b.innerHTML=icon(t.icon||{salamanca:'pin',campos:'sprout',deporte:'cup',recuerdos:'tv',rincones:'map',refranes:'chat'}[t.id]||'chat');b.append(label);
    b.addEventListener('click',()=>{sync();$('quiz-sync-notice').textContent='';topic=t;ensureRound();save();renderTopics();render();});$('quiz-topics').append(b);
   });
   if(focused)root.querySelector(`[data-quiz-topic="${focused}"]`)?.focus({preventScroll:true});
