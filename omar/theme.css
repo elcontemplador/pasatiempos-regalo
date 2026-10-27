@@ -1,0 +1,10 @@
+/* Omar · rutas, taller y recuerdos */
+:root{--ink:#26332e;--blue:#394b3d;--accent:#ad4f2d;--pale:#e7eee5;--line:#cbd2c5;--yellow:#efd19a;--muted:#58655d;--paper:#fffefa;--page:#f0ede5;--radius:14px}
+body{background:var(--page)}
+.birthday-stripe{height:8px;background:linear-gradient(90deg,#394b3d 0 72%,#bf693e 72% 100%)}
+.masthead{margin:0 0 27px;padding:28px 30px;background:#394b3d;color:#fffefa;border-radius:16px;align-items:center;position:relative;overflow:hidden}
+.masthead .eyebrow{color:#f4d4a5}.masthead h1{font-family:system-ui,sans-serif;font-size:clamp(1.9rem,3vw,2.8rem);line-height:1.08;letter-spacing:-.04em}.masthead h1 span{color:#f1c89c}.masthead .birthday-note p{color:#f2ede1;border-color:#8fa491}.portrait{border-radius:12px;box-shadow:none;border-color:#d5decf}.game-tab{border-radius:10px;box-shadow:0 3px 0 #d3d9cf}.game-tab.active{background:#394b3d;color:white;box-shadow:0 3px 0 #bf693e}.game-tab:hover{border-color:#768c76}.theme-button.active{background:#e1e9dd;border-color:#78917c}.play-area{box-shadow:0 10px 24px #3546330a}.game-tag{border-radius:4px;letter-spacing:.14em}.comfort-button{border-color:#acbbac}.word-grid{border-color:#879b87}.hint-button{border-color:#d1b071}.quiz-play [tabindex='-1']:focus-visible,.play-heading h2[tabindex]:focus-visible{outline-color:#a84425}
+@media(max-width:680px){.masthead{padding:20px;margin-bottom:18px}.masthead h1{font-size:1.9rem}}
+
+/* Monograma provisional y tablero integrado en la paleta. */
+.monogram{display:grid;place-items:center;background:#4d6552;color:#f9e5c7;font:700 2rem/1 system-ui,sans-serif}.word-grid{background:#dbe4d8;border-color:#a9b9a7}.letter:not(.found){color:#263b2e}.letter:hover{background:#ebf2e9}.word-check{border-color:#a8bda8}

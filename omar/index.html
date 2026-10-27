@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#9f531d"><meta name="description" content="Vista previa de los pasatiempos de Omar">
+  <meta name="robots" content="noindex,nofollow"><meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Los pasatiempos de Omar · Vista previa</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./style.css?v=37"><link rel="stylesheet" href="./domino.css?v=37"><link rel="stylesheet" href="./chess.css?v=37"><link rel="stylesheet" href="./special-games.css"><link rel="stylesheet" href="./theme.css">
+</head>
+<body data-person="omar">
+ <div class="birthday-stripe"></div>
+ <div class="shell"><p class="preview-banner" role="status">Vista previa · contenidos en preparación</p>
+  <header class="masthead">
+   <div class="identity"><span class="portrait monogram" aria-hidden="true">O</span><div><p class="eyebrow">UN REGALO PARA TI</p><h1>Los pasatiempos<br>de <span>Omar</span></h1></div></div>
+   <div class="birthday-note"><p>Rutas, motores y buenos ratos<br>Un regalo para ti.</p></div>
+  </header>
+  <nav class="game-tabs" aria-label="Elige un juego">
+   <button id="tab-words" class="game-tab active" aria-pressed="true"><span class="tab-icon" aria-hidden="true">Aa</span><span>Sopas de letras<small>Palabras que te acompañan</small></span></button>
+   <button id="tab-puzzle" class="game-tab" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 3v6h3v3h-3v9M3 12h5v3h4m0-3h9"/></svg><span>Puzles con tus fotos<small>Una pieza, un recuerdo</small></span></button>
+   <button id="tab-quiz" class="game-tab" aria-pressed="false"><span class="tab-icon" aria-hidden="true">?</span><span>Trivial<small>Diez preguntas para disfrutar</small></span></button>
+   <button id="tab-letters" class="game-tab" aria-pressed="false"><span class="tab-icon" aria-hidden="true">1–9</span><span>Sudoku<small>Un número en cada casilla</small></span></button>
+   <button id="tab-domino" class="game-tab" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M6 12h12"/><circle cx="10" cy="7" r="1"/><circle cx="14" cy="17" r="1"/><circle cx="10" cy="15" r="1"/></svg><span>Dominó<small>Una mesa, cuatro jugadores</small></span></button>
+   <button id="tab-chess" class="game-tab" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M10 2h4v4h4v4h-4v3h-4v-3H6V6h4zM6 13h12l-2 6H8zM5 22h14"/></svg><span>Ajedrez<small>Una partida sin prisa</small></span></button>
+  </nav>
+  <div class="comfort-tools" aria-label="A tu gusto"><button id="surprise" class="comfort-button"><span aria-hidden="true">✦</span> Sorpréndeme</button><button id="large-text" class="comfort-button" aria-pressed="false"><span aria-hidden="true">A+</span> Letra grande</button></div>
+  <main id="main">
+   <section id="words-view" aria-labelledby="word-title">
+    <div class="words-layout">
+     <aside class="theme-side"><h2 class="section-label">¿Qué te apetece buscar?</h2><div id="themes" class="theme-list"></div><p class="side-note">Cada tablero es diferente.<br>El buen rato lo pones tú.</p></aside>
+     <div class="play-area">
+      <div class="play-heading"><div><h2 id="word-title"></h2><p id="word-description"></p></div><span class="game-tag">SOPA DE LETRAS</span></div>
+      <div class="game-toolbar"><fieldset class="segmented"><legend class="sr-only">Dificultad de la sopa</legend><label><input type="radio" name="difficulty" value="calma" checked><span>Con calma</span></label><label><input type="radio" name="difficulty" value="reto"><span>Un reto</span></label></fieldset><button class="text-button" id="new-word">↻ Otro tablero</button></div>
+      <div id="word-recovery-tools" class="recovery-tools" hidden><button id="word-recover" class="text-button recovery-button">↶ Recuperar tablero anterior</button></div>
+      <p class="instruction" id="word-instruction">Toca la primera y la última letra de una palabra.</p>
+      <div class="board-and-list"><div class="board-panel"><div id="word-grid" class="word-grid" role="group" aria-label="Tablero de sopa de letras"></div><div class="board-bottom"><span id="word-progress"></span><button class="hint-button" id="word-hint">Dame una pista</button></div></div>
+       <div class="word-list-panel"><h3 id="word-list-title">Palabras a encontrar</h3><ul id="word-list" class="word-list"></ul><p class="small-note">Sin espacios ni tildes en el tablero. La Ñ conserva su sitio.</p></div>
+      </div>
+      <div id="word-win" tabindex="-1" class="win-message" hidden><strong>¡Todas encontradas, Omar!</strong><span>Otra sopa cuando te apetezca.</span><button class="primary-button" id="word-again">Jugar otra vez</button></div>
+     </div>
+    </div>
+   </section>
+   <section id="puzzle-view" hidden aria-labelledby="puzzle-title">
+    <div class="puzzle-layout"><aside class="photo-side"><h2 class="section-label">Tu recuerdo</h2><div class="chosen-memory"><img id="chosen-photo" alt=""><div><p id="chosen-title"></p><p id="photo-credit" class="photo-credit" hidden></p><button id="change-photo" class="comfort-button">Cambiar foto <span aria-hidden="true">↗</span></button></div></div></aside>
+     <div id="puzzle-play" class="play-area"><div class="play-heading"><div><h2 id="puzzle-title">Una sonrisa de hoy</h2><p>Vamos a poner cada pieza en su sitio.</p></div><span class="game-tag">PUZLE DE FOTOS</span></div>
+      <div class="game-toolbar"><fieldset class="segmented"><legend class="sr-only">Número de piezas</legend><label><input type="radio" name="pieces" value="3" checked><span>9 piezas</span></label><label><input type="radio" name="pieces" value="4"><span>16 piezas</span></label></fieldset><button class="text-button" id="new-puzzle">↻ Mezclar</button><button class="comfort-button" id="expand-puzzle" aria-haspopup="dialog">Ampliar puzle</button></div>
+      <div id="puzzle-recovery-tools" class="recovery-tools" hidden><button id="puzzle-recover" class="text-button recovery-button">↶ Recuperar puzle anterior</button></div>
+      <p class="instruction">Toca dos piezas para intercambiarlas.</p>
+      <div class="puzzle-surface"><div id="puzzle-board" class="puzzle-board" role="group" aria-label="Piezas de la fotografía"></div></div>
+      <div class="puzzle-bottom"><span id="puzzle-progress"></span><button class="hint-button" id="show-photo">Ver la foto</button></div>
+      <div id="puzzle-win" tabindex="-1" class="win-message" hidden><strong>¡La foto está completa!</strong><span>Un recuerdo, pieza a pieza.</span><button class="primary-button" id="puzzle-again">Volver a jugar</button></div>
+     </div></div>
+   </section>
+   <section id="quiz-view" hidden aria-labelledby="quiz-title">
+    <div class="quiz-layout">
+     <aside><h2 class="section-label">Elige un tema</h2><div id="quiz-topics" class="theme-list"></div><p class="side-note">Para jugar solo<br>o en buena compañía.</p></aside>
+     <div class="play-area quiz-play">
+      <div class="play-heading"><div><h2 id="quiz-title"></h2><p id="quiz-description"></p></div><span class="game-tag">TRIVIAL</span></div>
+     <p id="quiz-sync-notice" class="sync-notice" role="status" aria-live="polite"></p>
+      <div class="quiz-progress-line"><span id="quiz-progress"></span><span id="quiz-score"></span></div>
+      <progress id="quiz-meter" max="10" value="0" aria-label="Preguntas respondidas"></progress>
+      <div id="quiz-question-area">
+       <h3 id="quiz-question" tabindex="-1"></h3><p class="quiz-instruction">Toca la respuesta que creas correcta.</p>
+       <div id="quiz-help" class="quiz-help"><button id="quiz-fifty" class="hint-button" aria-describedby="quiz-help-note">Comodín 50/50</button><p id="quiz-help-note" role="status" aria-live="polite" aria-atomic="true">Una vez por partida. Deja dos opciones.</p></div>
+       <div id="quiz-answers" class="quiz-answers" role="group" aria-labelledby="quiz-question"></div>
+       <div id="quiz-feedback" tabindex="-1" class="quiz-feedback" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+       <button id="quiz-next" class="primary-button quiz-next" hidden>Siguiente pregunta</button>
+      </div>
+      <div id="quiz-result" class="quiz-result" hidden>
+       <p class="eyebrow">¡PARTIDA COMPLETADA!</p><h3 id="quiz-result-title" tabindex="-1"></h3><p id="quiz-result-message"></p>
+       <button id="quiz-again" class="primary-button">Otras 10 preguntas</button>
+       <details id="quiz-review"><summary>Repasar las respuestas</summary><ol id="quiz-review-list"></ol></details>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section id="letters-view" hidden aria-label="Sudoku"></section>
+   <section id="domino-view" hidden aria-labelledby="domino-title">
+    <div id="domino-play" class="play-area domino-play">
+     <div class="play-heading"><div><h2 id="domino-title">Dominó por parejas</h2><p>Tu compañero y tú frente a dos rivales. Un buen rato, ficha a ficha.</p></div><span class="game-tag">CUATRO JUGADORES</span></div>
+     <div class="domino-topbar"><div class="domino-score" aria-label="Marcador de la partida"><div><span>Tú y tu compañero</span><strong id="domino-us">0</strong></div><div><span>Los rivales</span><strong id="domino-them">0</strong></div></div><p id="domino-round" class="domino-round"></p></div>
+     <div class="game-toolbar"><button id="expand-domino" class="comfort-button" aria-haspopup="dialog">Ampliar mesa</button><button id="domino-new" class="text-button">Nueva partida</button><button id="domino-rules" class="comfort-button" aria-haspopup="dialog">Cómo se juega</button><button id="domino-settings" class="comfort-button" aria-haspopup="dialog">Opciones</button><button id="domino-recover" class="text-button" hidden>Recuperar partida anterior</button></div>
+     <div id="domino-guide-tip" class="domino-guide-tip"><p>Puedes arrastrar las fichas o jugar con dos toques.</p><button id="domino-guide-open" class="text-button" aria-haspopup="dialog">Guía rápida</button><button id="domino-guide-dismiss" class="text-button">Ocultar ayuda</button></div>
+     <div class="domino-view-tools" aria-label="Recorrer la mesa"><button id="domino-see-left" class="comfort-button">Ver A</button><button id="domino-see-right" class="comfort-button">Ver B</button><button id="domino-see-last" class="comfort-button">Última</button><button id="domino-fit" class="comfort-button" aria-pressed="false">Mesa completa</button><button id="domino-history" class="comfort-button" aria-haspopup="dialog">Jugadas</button></div>
+     <div class="domino-body">
+      <div id="domino-table" class="domino-table" aria-label="Mesa de cuatro jugadores">
+       <div id="domino-seat-2" class="domino-seat"></div><div id="domino-seat-1" class="domino-seat"></div>
+       <div id="domino-arena" class="domino-arena" tabindex="0" aria-label="Mesa de dominó. Desliza para recorrer la cadena."><div id="domino-surface"><ol id="domino-chain" class="domino-chain" aria-label="Cadena de fichas, del extremo A al B"></ol></div><p id="domino-drop-caption" class="domino-drop-caption" aria-live="polite" hidden></p></div>
+       <div id="domino-seat-3" class="domino-seat"></div><div id="domino-seat-0" class="domino-seat"></div>
+      </div>
+      <p class="domino-table-hint">Suelta la ficha junto a la cadena o dentro de la mesa. El destino se ilumina antes de colocarla.</p>
+      <div class="domino-dock">
+       <div class="domino-ends"><button id="domino-left" disabled>Colocar salida</button><button id="domino-right" disabled hidden>B</button></div>
+       <div class="domino-interaction"><p id="domino-instruction" class="instruction domino-instruction" tabindex="-1" role="status" aria-live="polite" aria-atomic="true"></p><p id="domino-notice" class="domino-notice" role="status"></p>
+        <h3 class="domino-hand-title">Tus fichas</h3><div id="domino-hand" class="domino-hand" role="group" aria-label="Tus fichas de dominó"></div>
+        <div class="domino-actions"><button id="domino-pass" class="primary-button" hidden>Pasar</button><button id="domino-step" class="primary-button" hidden>Siguiente jugada</button><button id="domino-undo" class="text-button" hidden>Rectificar mi jugada</button><button id="domino-pause" class="text-button" aria-pressed="false">Pausar partida</button></div>
+        <p id="domino-status" class="domino-status" role="status" aria-live="polite" aria-atomic="true"></p>
+       </div>
+      </div>
+     </div>
+     <div id="domino-result" class="domino-result" hidden><h3 id="domino-result-title" tabindex="-1"></h3><p id="domino-result-text"></p><p id="domino-score-change" class="domino-score-change"></p><button id="domino-next" class="primary-button" hidden>Siguiente mano</button><button id="domino-again" class="primary-button" hidden>Volver a jugar</button><details><summary>Ver las fichas que quedaban</summary><div id="domino-remaining"></div></details></div>
+    </div>
+   </section>
+   <section id="chess-view" hidden aria-labelledby="chess-title">
+    <div id="chess-play" class="play-area chess-play">
+     <div class="play-heading"><div><h2 id="chess-title">Una partida de ajedrez</h2><p>Frente al ordenador, sin reloj y sin prisa.</p></div><span class="game-tag">AJEDREZ</span></div>
+     <div class="game-toolbar chess-toolbar"><button id="expand-chess" class="comfort-button" aria-haspopup="dialog">Ampliar tablero</button><button id="chess-new" class="text-button" aria-haspopup="dialog">Nueva partida</button><button id="chess-options" class="comfort-button" aria-haspopup="dialog">Opciones</button><button id="chess-history" class="comfort-button" aria-haspopup="dialog">Jugadas</button><button id="chess-recover" class="text-button" hidden>Recuperar partida anterior</button></div>
+     <div class="chess-layout">
+      <div class="chess-table">
+       <div id="chess-computer-row" class="chess-player"><span id="chess-computer-piece" class="chess-player-piece" aria-hidden="true"></span><div class="chess-player-info"><div class="chess-player-name"><strong id="chess-computer"></strong><span id="chess-computer-turn" class="chess-turn"></span></div><span id="chess-computer-last" class="chess-player-last"></span><div id="chess-computer-captures" class="chess-captures" role="img" aria-label="Sin capturas"></div></div></div>
+       <div class="chess-frame"><div id="chess-ranks" class="chess-ranks" aria-hidden="true"></div><div id="chess-board" class="chess-board" role="group" aria-label="Tablero de ajedrez. Usa las flechas para recorrer las casillas y pulsa Intro para elegir."></div><div id="chess-files" class="chess-files" aria-hidden="true"></div></div>
+       <div id="chess-you-row" class="chess-player"><span id="chess-you-piece" class="chess-player-piece" aria-hidden="true"></span><div class="chess-player-info"><div class="chess-player-name"><strong id="chess-you"></strong><span id="chess-your-turn" class="chess-turn"></span></div><span id="chess-your-last" class="chess-player-last"></span><div id="chess-your-captures" class="chess-captures" role="img" aria-label="Sin capturas"></div></div></div>
+      </div>
+      <div class="chess-companion">
+       <p id="chess-status" class="chess-status" role="status" aria-live="polite" aria-atomic="true"></p>
+       <p id="chess-notice" class="chess-notice" role="status" aria-live="polite" aria-atomic="true"></p>
+       <div id="chess-actions" class="chess-actions"><button id="chess-undo" class="comfort-button">Rectificar jugada</button><button id="chess-pause" class="text-button">Pausar partida</button><button id="chess-claim" class="comfort-button" hidden>Reclamar tablas</button></div>
+       <div id="chess-recent" class="chess-recent" hidden><h3>Últimos turnos</h3><ul id="chess-recent-list"></ul></div>
+       <div id="chess-result" class="chess-result" hidden><h3 id="chess-result-title" tabindex="-1"></h3><p id="chess-result-text"></p><button id="chess-again" class="primary-button" aria-haspopup="dialog">Otra partida</button></div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <p id="announcement" class="announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+  </main>
+  <div class="app-status"><p id="storage-status" role="status" hidden></p><p id="offline-status" role="status">Preparando el juego sin conexión…</p><button id="offline-retry" class="text-button" hidden>Reintentar descarga</button></div>
+  <footer><p>Un regalo para Omar. <span>Vista previa de los contenidos.</span></p><button id="birthday-message" class="text-button">Un mensaje para ti</button><button id="install-help" class="text-button">Llevar al móvil</button><button id="share-friends" class="text-button">Compartir con amigos</button></footer>
+ </div>
+ <dialog id="gallery-dialog" aria-labelledby="gallery-title"><button class="dialog-close" aria-label="Cerrar galería">×</button><h2 id="gallery-title">Elige un recuerdo</h2><p class="gallery-note">Ocho fotos, muchas historias. Tu puzle se guarda al cambiar de foto.</p><div id="photo-options" class="photo-options"></div><button class="primary-button dialog-done">Seguir jugando</button></dialog>
+ <dialog id="birthday-dialog" aria-labelledby="birthday-title"><button class="dialog-close" aria-label="Cerrar mensaje">×</button><p class="eyebrow">UN REGALO PARA TI</p><h2 id="birthday-title">Para Omar</h2><p>La dedicatoria personalizada se añadirá más adelante.</p><button class="primary-button dialog-done">Seguir jugando</button></dialog>
+ <dialog id="puzzle-zoom-dialog" aria-labelledby="puzzle-zoom-title"><div class="puzzle-zoom-heading"><h2 id="puzzle-zoom-title">Puzle ampliado</h2><button class="comfort-button" id="close-puzzle-zoom">Volver</button></div><p class="puzzle-zoom-tip">El tablero se adapta a la pantalla. Juega sin prisa.</p><p id="puzzle-zoom-announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p></dialog>
+ <dialog id="photo-dialog" aria-labelledby="reference-title"><button class="dialog-close" aria-label="Cerrar fotografía">×</button><h2 id="reference-title">La foto completa</h2><img id="reference-photo" alt=""/><button class="primary-button dialog-done">Seguir jugando</button></dialog>
+ <dialog id="help-dialog" aria-labelledby="help-title"><button class="dialog-close" aria-label="Cerrar ayuda">×</button><h2 id="help-title">Siempre a mano</h2><p>Abre esta web en Chrome en tu móvil Android. Pulsa el menú <strong>⋮</strong> y elige <strong>Añadir a pantalla de inicio</strong> o <strong>Instalar aplicación</strong>.</p><p>En el iPad: abre la web en Safari, pulsa <strong>Compartir</strong> y después <strong>Añadir a pantalla de inicio</strong>.</p><p class="small-note">Las partidas se guardan en este navegador. Si borras sus datos, se reinician. El aviso al pie de la página te indicará cuándo están preparados todos los juegos y fotos para jugar sin conexión.</p><button class="primary-button dialog-done">Entendido</button></dialog>
+ <dialog id="share-dialog" aria-labelledby="share-title"><button class="dialog-close" aria-label="Cerrar compartir">×</button><h2 id="share-title">Compartir con amigos</h2><p>Para disfrutar solo o en buena compañía.</p><label class="share-label" for="share-link">Enlace a la web</label><input id="share-link" type="text" readonly spellcheck="false"><div class="share-actions"><button id="share-native" class="primary-button" hidden>Compartir…</button><button id="share-copy" class="hint-button">Copiar enlace</button></div><p id="share-status" role="status" aria-live="polite" aria-atomic="true"></p><button class="text-button dialog-done">Seguir jugando</button></dialog>
+ <dialog id="domino-zoom-dialog" aria-labelledby="domino-zoom-title"><div class="domino-zoom-heading"><h2 id="domino-zoom-title">Tu mesa de dominó</h2><button id="close-domino-zoom" class="comfort-button">Volver</button></div><p class="domino-zoom-tip">Más espacio para seguir la partida. Desliza la mesa para recorrer toda la cadena.</p></dialog>
+ <dialog id="domino-settings-dialog" aria-labelledby="domino-settings-title"><button class="dialog-close" aria-label="Cerrar opciones">×</button><h2 id="domino-settings-title">A tu ritmo</h2><p id="domino-variant" class="domino-variant"></p><div class="domino-options"><label for="domino-speed">Ritmo de los otros jugadores</label><select id="domino-speed"><option value="normal">Normal</option><option value="slow">Más despacio</option><option value="step">Una jugada cada vez</option></select><p class="small-note">El ritmo no cambia la dificultad ni las reglas. En «Una jugada cada vez», pulsa «Siguiente jugada» para avanzar.</p><label class="domino-sound-option" for="domino-sound"><input type="checkbox" id="domino-sound"> Sonidos suaves</label><p id="domino-sound-status" class="small-note" role="status"></p></div><button id="domino-guide-settings" class="comfort-button" aria-haspopup="dialog">Guía rápida</button><button class="primary-button dialog-done">Seguir jugando</button></dialog>
+ <dialog id="domino-guide-dialog" aria-labelledby="domino-guide-title"><button class="dialog-close" aria-label="Cerrar guía">×</button><h2 id="domino-guide-title">Ficha a ficha</h2><ol><li><strong>Elige una ficha disponible.</strong> Puedes arrastrarla hasta el tapete: verás dónde encajará antes de soltarla.</li><li><strong>También puedes jugar con dos toques.</strong> Toca la ficha y después el extremo A o B. Las letras se mantienen aunque la cadena haga curvas.</li></ol><p>La primera mano se abre con el doble seis. Cuando no puedas colocar ninguna ficha, aparecerá «Pasar».</p><p>«Ver A», «Ver B» y «Última» te llevan a esas partes de la mesa sin jugar ninguna ficha. «Mesa completa» ofrece una vista general; puedes seguir desplazándote para leer las fichas.</p><button class="primary-button dialog-done">A jugar</button></dialog>
+ <dialog id="domino-history-dialog" aria-labelledby="domino-history-title"><button class="dialog-close" aria-label="Cerrar jugadas">×</button><h2 id="domino-history-title">Últimas jugadas</h2><ol id="domino-recent" class="domino-recent" aria-label="Las cuatro últimas jugadas, de la más antigua a la más reciente"></ol><details><summary>Ver toda esta mano</summary><ol id="domino-history-list" class="domino-history-list" aria-label="Historial público de esta mano, en orden de juego"></ol></details><p class="small-note">Solo aparecen las fichas jugadas y los pases. Las manos de los demás permanecen ocultas hasta el final.</p><button class="primary-button dialog-done">Volver a la mesa</button></dialog>
+ <dialog id="domino-new-dialog" aria-labelledby="domino-new-title"><button class="dialog-close" aria-label="Cerrar nueva partida">×</button><h2 id="domino-new-title">Una partida de dominó</h2><p>A cuatro, por parejas, hasta 100 puntos. Los otros tres jugadores los lleva el juego.</p><div class="domino-options"><label for="domino-level">¿Cómo te apetece jugar?</label><select id="domino-level"><option value="calma">Con calma</option><option value="reto">Con estrategia</option></select><label for="domino-scoring">Puntos al ganar una mano</label><select id="domino-scoring"><option value="all">Sumar todas las fichas pendientes</option><option value="opponents">Sumar solo las fichas de los rivales</option></select></div><p class="small-note">La partida que llevabas podrás recuperarla con «Recuperar partida anterior».</p><button id="domino-start" class="primary-button">Repartir y empezar</button><button class="text-button dialog-done">Seguir con mi partida</button></dialog>
+ <dialog id="domino-rules-dialog" aria-labelledby="domino-rules-title"><button class="dialog-close" aria-label="Cerrar reglas">×</button><h2 id="domino-rules-title">Una mesa de cuatro</h2><ul><li>Juegas con el compañero de enfrente. Se reparten las 28 fichas: siete para cada uno. No hay fichas para robar.</li><li>En la primera mano sale quien tiene el doble seis, colocándolo. Después, la salida pasa al jugador de su derecha, con la ficha que quiera. El turno avanza hacia la derecha.</li><li>Arrastra una ficha disponible hasta el extremo de la mesa donde quieras colocarla. Puedes soltarla junto a un extremo de la cadena o dentro de la mesa: el juego la orienta y la encaja en el extremo válido más cercano. Si la sueltas fuera de la mesa, vuelve a tu mano. También puedes tocar la ficha y después el extremo A o B. Si no tienes ninguna que encaje, pulsa «Pasar».</li><li>Gana la mano la pareja de quien se queda sin fichas. Si los cuatro pasan, gana la pareja con menos puntos en sus fichas; si empatan, nadie suma.</li><li>Al empezar puedes elegir entre sumar todas las fichas pendientes o solo las de los rivales. Gana la primera pareja que llegue a 100 puntos.</li></ul><p>Las fichas de los demás se muestran al terminar cada mano. La partida se guarda tras cada jugada; al cambiar de juego, se queda esperando. «Rectificar mi jugada» recupera tu último turno, retirando también las respuestas posteriores de los otros jugadores.</p><button class="primary-button dialog-done">A jugar</button></dialog>
+ <noscript><p>Activa JavaScript en tu navegador para jugar.</p></noscript>
+ <dialog id="chess-zoom-dialog" aria-labelledby="chess-zoom-title"><div class="chess-zoom-heading"><h2 id="chess-zoom-title">Tu tablero de ajedrez</h2><button id="close-chess-zoom" class="comfort-button">Volver</button></div></dialog>
+ <dialog id="chess-new-dialog" aria-labelledby="chess-new-title"><button class="dialog-close" aria-label="Cerrar nueva partida">×</button><h2 id="chess-new-title">Una nueva partida</h2><div class="chess-options"><label for="chess-new-color">Tus piezas</label><select id="chess-new-color"><option value="w">Blancas · tú empiezas</option><option value="b">Negras · empieza el ordenador</option></select><label for="chess-new-level">Dificultad</label><select id="chess-new-level"><option value="calma">Con calma</option><option value="medio">Un poco más</option><option value="reto">Un reto</option></select></div><p>La partida que llevabas queda disponible en «Recuperar partida anterior».</p><button id="chess-start" class="primary-button">A jugar</button></dialog>
+ <dialog id="chess-options-dialog" aria-labelledby="chess-options-title"><button class="dialog-close" aria-label="Cerrar opciones de ajedrez">×</button><h2 id="chess-options-title">A tu gusto</h2><div class="chess-options"><label for="chess-level">Dificultad del ordenador</label><select id="chess-level"><option value="calma">Con calma</option><option value="medio">Un poco más</option><option value="reto">Un reto</option></select><p class="small-note">Puedes cambiarla sin empezar de nuevo. Los tres niveles son para disfrutar de una partida tranquila.</p></div><div class="chess-option-actions"><button id="chess-flip" class="comfort-button">Girar tablero</button><button id="chess-rules" class="comfort-button" aria-haspopup="dialog">Cómo se juega</button><button id="chess-resign" class="text-button" aria-haspopup="dialog">Dar la partida por terminada</button></div><button class="primary-button dialog-done">Seguir jugando</button></dialog>
+ <dialog id="chess-rules-dialog" aria-labelledby="chess-rules-title"><button class="dialog-close" aria-label="Cerrar ayuda de ajedrez">×</button><h2 id="chess-rules-title">Pieza a pieza</h2><p>Toca una de tus piezas y después una casilla marcada. También puedes arrastrarla. El punto marca un destino libre y el círculo una captura.</p><p>Gana quien da <strong>jaque mate</strong>: el rey está amenazado y no tiene una defensa legal. Si estás en jaque, solo podrás jugar movimientos que protejan tu rey.</p><p>Se permiten <strong>enroque</strong>, <strong>captura al paso</strong> y <strong>coronación</strong>. Para enrocar, mueve el rey dos casillas; la torre lo acompaña. Al llegar un peón al final, podrás elegir dama, torre, alfil o caballo.</p><p>«Rectificar jugada» recupera tu último turno, incluida la respuesta del ordenador. «Pausar partida» detiene al ordenador. Las partidas se guardan en este navegador.</p><p>Hay tablas por rey ahogado o material insuficiente. Puedes reclamarlas cuando una posición aparece tres veces o tras 50 movimientos de cada lado sin mover peones ni capturar. Son automáticas tras cinco repeticiones o 75 movimientos; el mate tiene prioridad.</p><p class="small-note">Con teclado: flechas para recorrer el tablero, Intro o espacio para elegir y Escape para cancelar la selección. Inicio y Fin te llevan a los extremos de la fila.</p><button class="primary-button dialog-done">A jugar</button></dialog>
+ <dialog id="chess-promotion-dialog" aria-labelledby="chess-promotion-title"><button class="dialog-close" aria-label="Cancelar coronación">×</button><h2 id="chess-promotion-title">Tu peón ha llegado</h2><p>Elige la pieza en la que quieres convertirlo.</p><div id="chess-promotion-options" class="chess-promotion-options"></div></dialog>
+ <dialog id="chess-history-dialog" aria-labelledby="chess-history-title"><button class="dialog-close" aria-label="Cerrar jugadas de ajedrez">×</button><h2 id="chess-history-title">Las jugadas de esta partida</h2><ol id="chess-history-list" class="chess-history-list"></ol><button class="primary-button dialog-done">Seguir jugando</button></dialog>
+ <dialog id="chess-resign-dialog" aria-labelledby="chess-resign-title"><button class="dialog-close" aria-label="Cancelar fin de partida">×</button><h2 id="chess-resign-title">¿Terminamos esta partida?</h2><p>Se dará la victoria al ordenador. Después podrás empezar otra o retomar esta misma partida.</p><div class="chess-option-actions"><button class="comfort-button dialog-done">Seguir jugando</button><button id="chess-confirm-resign" class="text-button">Sí, terminar partida</button></div></dialog>
+ <script type="module" src="./app.js?v=37"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+/* Leti · libros, fotografía y ritmo */
+:root{--ink:#2c2528;--blue:#8d273a;--accent:#b3394e;--pale:#f7e9e7;--line:#dfd0c9;--yellow:#f2cb7b;--muted:#706064;--paper:#fffdfa;--page:#f7f2ea;--radius:6px}
+body{background:var(--page)}
+.birthday-stripe{height:7px;background:linear-gradient(90deg,#8d273a 0 79%,#d6a75a 79% 100%)}
+.masthead{border-bottom:3px solid #2c2528;margin-bottom:28px;padding:20px 0 27px}.masthead h1{font-family:Georgia,serif;font-size:clamp(2.1rem,3.5vw,3.2rem);line-height:1.02;letter-spacing:-.04em}.masthead h1 span{color:#8d273a}.masthead .eyebrow{letter-spacing:.2em;color:#8d273a}.masthead .birthday-note p{border-color:#c7aaa4}.portrait{border-radius:3px;border-color:#fffdfa;box-shadow:6px 6px 0 #d5b1ad}.game-tabs{gap:8px}.game-tab{border-radius:3px;border-color:#d3c0b8;box-shadow:none}.game-tab.active{background:#8d273a;color:white;border-color:#8d273a;box-shadow:4px 4px 0 #e8c4aa}.game-tab small{letter-spacing:.005em}.theme-button{border-radius:3px}.theme-button.active{background:#f3e2de;border-color:#b46571;box-shadow:inset 3px 0 #8d273a}.play-area{border-radius:6px;box-shadow:5px 5px 0 #eaded3}.play-heading h2,.section-label{letter-spacing:-.015em}.game-tag{border-radius:0;border-color:#b17980}.comfort-button{border-radius:3px;border-color:#c9a9a6}.hint-button{border-color:#cfa86e}.quiz-play [tabindex='-1']:focus-visible,.play-heading h2[tabindex]:focus-visible{outline-color:#9c263b}
+@media(max-width:680px){.masthead{padding-top:5px;margin-bottom:18px}.masthead h1{font-size:2rem}.play-area{box-shadow:3px 3px 0 #eaded3}}
+
+/* Monograma provisional y tablero integrado en la paleta. */
+.monogram{display:grid;place-items:center;background:#f1dcd5;color:#8d273a;font:700 2.5rem/1 Georgia,serif}.word-grid{background:#f0dfda;border-color:#d3b9b3}.letter:not(.found){color:#3c2b30}.letter:hover{background:#f8ece9}.word-check{border-color:#c7a9a6}

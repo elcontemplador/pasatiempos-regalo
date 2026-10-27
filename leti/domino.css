@@ -1,0 +1,166 @@
+/* Domino presentation: ordinary HTML, CSS dots and a scrollable felt table. */
+.domino-play{--hand-unit:2.9rem;max-width:1200px;margin:auto}
+.domino-topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;margin:14px 0 10px;min-width:0}
+.domino-score{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0;min-width:0}
+.domino-score>div{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;min-width:0;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:#f5f7f5}
+.domino-score>div:first-child{background:#e8f1ff;border-color:#a9c5e8}
+.domino-score span{font-size:.875rem;line-height:1.3;overflow-wrap:anywhere}
+.domino-score strong{font-size:1.375rem;line-height:1.2;color:var(--blue);flex-shrink:0}
+.domino-play .domino-round,.domino-play .domino-variant{font-size:.8125rem;line-height:1.4;color:var(--muted)}
+.domino-play .domino-round{margin:0;text-align:right}
+.domino-play .game-toolbar{justify-content:flex-start;gap:6px;margin:8px 0}
+.domino-play .game-toolbar button,.domino-view-tools button,.domino-actions button{min-height:44px;max-width:100%;font-size:.875rem;line-height:1.3;white-space:normal}
+.domino-play .game-toolbar button{padding:8px 10px}
+.domino-view-tools{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.domino-view-tools button{padding:8px 10px}
+.domino-body,.domino-dock,.domino-interaction{min-width:0}
+.domino-body{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-items:start}
+
+/* Partner and player retain their blue identity independently of the current turn. */
+.domino-table{position:relative;display:grid;grid-template-columns:6rem minmax(0,1fr) 6rem;grid-template-areas:". north ." "west arena east" ". south .";align-items:center;gap:8px;min-width:0;margin:0;padding:10px;border:7px solid #79553e;border-radius:26px;background:radial-gradient(ellipse at center,#24765a,#10523e);box-shadow:inset 0 0 22px #082c2b55,0 3px 9px #183d7020}
+#domino-seat-2{grid-area:north}#domino-seat-1{grid-area:west}#domino-seat-3{grid-area:east}#domino-seat-0{grid-area:south}
+.domino-seat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;padding:6px 5px;border:2px solid #b9c8bc;border-radius:11px;background:#f5f6ef;color:#173653;text-align:center;font-size:.8125rem;line-height:1.2;box-shadow:0 2px 5px #052c2925}
+#domino-seat-0,#domino-seat-2{background:#e8f1ff;border-color:#8db5e6}
+.domino-seat strong{font-size:.875rem;line-height:1.2;overflow-wrap:anywhere}
+.domino-seat .seat-count,.domino-seat .seat-turn,.seat-last{font-size:.8125rem;line-height:1.25}
+.domino-seat .seat-turn:empty{display:none}
+.domino-seat .seat-turn{font-weight:650}
+.domino-seat.current{border-color:#a96e09;box-shadow:0 0 0 2px #ffdf8c,0 2px 5px #052c2925}
+.domino-seat.just-played{box-shadow:0 0 0 3px #ffdf8c80}
+.domino-backs{display:none}
+.seat-last{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;max-width:100%}
+.seat-last .domino-face{width:48px;height:25px;border-width:1px}
+.seat-last .domino-half{padding:2px;gap:1px}
+.seat-last span{overflow-wrap:anywhere}
+#domino-seat-0,#domino-seat-2{flex-direction:row;flex-wrap:wrap;gap:5px 8px;min-height:40px}
+.domino-arena{grid-area:arena;position:relative;min-width:0;height:320px;min-height:9rem;overflow:auto;border-radius:14px;background:#ffffff04;overscroll-behavior:contain;scrollbar-width:thin;touch-action:pan-x pan-y}
+.domino-arena:focus-visible{outline:3px solid #ffdf8c;outline-offset:2px}
+#domino-surface{position:relative;min-width:0}
+#domino-chain{display:block;position:absolute;left:0;top:0;transform-origin:0 0;max-height:none;min-height:0;margin:0;padding:0;overflow:visible;list-style:none}
+#domino-chain .domino-placed,.domino-preview{position:absolute;display:block;transform:translate(-50%,-50%)}
+#domino-chain .domino-face{position:absolute;left:50%;top:50%;margin:0;box-shadow:0 2px 3px #062e2960;border-color:#b0b7a7;border-radius:4px}
+#domino-chain .domino-placed small{display:none}
+#domino-chain .last-play .domino-face{border-color:#c19331;background:#fff4ca;box-shadow:0 0 0 3px #ffe08d66,0 2px 5px #032c2c80}
+#domino-chain .domino-placed[data-seat="2"].last-play .domino-face{border-color:#82bdff;background:#e9f4ff;box-shadow:0 0 0 3px #82bdff66}
+.domino-socket{position:absolute;z-index:1;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;width:48px;height:48px;padding:4px;border:2px dashed #d3e5d199;border-radius:11px;background:#ffffff12;color:#fff;font-size:.9375rem;font-weight:700;line-height:1.15}
+.domino-socket:disabled{cursor:default;color:#dae9dc}
+.domino-socket.drop-available{background:#b0efb244;border-color:#b6f3b0;color:#fff}
+.domino-socket.drop-hover{background:#c3f7bb88;border-style:solid;box-shadow:0 0 0 4px #c3f7bb55}
+.domino-socket.drop-invalid{background:#bc493866;border-color:#ffbea6}
+.domino-placed.drop-available .domino-face{outline:2px dashed #8dea8d;outline-offset:3px}
+.domino-placed.drop-hover .domino-face{outline:4px solid #a5efa0;outline-offset:3px}
+.domino-placed.drop-invalid .domino-face{outline:3px dashed #f4b29d;outline-offset:3px}
+.domino-preview{z-index:3;pointer-events:none;opacity:.85}
+.domino-preview .domino-face{background:#d6f1d0!important;border:2px dashed #235737!important;box-shadow:0 0 0 3px #b5f3b170!important}
+.domino-play .domino-drop-caption{margin:0;position:absolute;left:50%;top:6px;transform:translateX(-50%);z-index:4;max-width:calc(100% - 12px);padding:6px 10px;border:1px solid #236643;border-radius:8px;background:#f0fff0;color:#16402c;font-size:.875rem;line-height:1.3;text-align:center;pointer-events:none;box-shadow:0 2px 8px #052c2940}
+.domino-play .domino-center-note{margin:0;position:absolute;max-width:180px;transform:translate(-50%,-50%);color:#edf5e8;text-align:center;font-family:Georgia,serif;font-size:1rem;line-height:1.4;pointer-events:none}
+.domino-play .domino-table-hint{font-size:.8125rem;line-height:1.4;color:var(--muted);margin:6px 0}
+.is-paused .domino-arena::after{content:'Partida en pausa';position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:4;max-width:calc(100% - 12px);padding:7px 12px;border:1px solid #a9c5e8;border-radius:8px;background:#e8f1ff;color:#173653;font-size:.875rem;line-height:1.3;font-weight:650;white-space:nowrap;pointer-events:none}
+
+/* Stand upright like real hand tiles; reserve their full rotated height. */
+.domino-dock{padding:8px 6px;border:1px solid var(--line);border-radius:12px;background:#f9fbff}
+.domino-ends{display:flex;justify-content:center;gap:8px;max-width:480px;margin:0 auto 6px}
+.domino-ends button{flex:1;min-width:0;min-height:44px;padding:8px;border:1px solid #aac0dc;border-radius:9px;background:var(--pale);color:var(--blue);font-size:.875rem;font-weight:650;line-height:1.3;white-space:normal}
+.domino-ends button:disabled{color:#596a7c;background:#f5f7f9;border-color:#d8e2ef}
+.domino-dragging .domino-ends button.drop-available{background:#e8f5ed;border-color:#32764d;color:#215636}
+.domino-dragging .domino-ends button.drop-hover{background:#c9edd5;border-color:#215636;box-shadow:0 0 0 3px #c9edd5}
+.domino-dragging .domino-ends button.drop-invalid{background:#fff0e9;border-color:#aa5030;color:#863716}
+.domino-play .domino-instruction{font-size:.875rem!important;line-height:1.4;padding:0!important;margin:4px 0 6px;color:var(--ink)!important}
+.domino-hand-title{font-size:.875rem;line-height:1.3;text-align:center;margin:2px 0 5px}
+.domino-hand{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;padding:3px 0;min-width:0}
+.domino-tile{position:relative;display:block;flex:0 0 auto;width:calc(var(--hand-unit) + 8px);height:calc(var(--hand-unit)*2 + 1.75rem);min-width:44px;min-height:44px;padding:0;overflow:hidden;border:2px solid #b4c8e4;border-radius:9px;background:#edf3fc}
+.domino-face{display:flex;flex-shrink:0;width:5rem;height:2.6rem;border:2px solid #61777d;border-radius:6px;background:#fffdf4;box-shadow:0 2px 3px #183d7012;overflow:hidden}
+.domino-half{display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);width:50%;height:100%;padding:4px;gap:2px}
+.domino-half+.domino-half{border-left:1px solid #899394}
+.domino-half i{display:block;border-radius:50%}.domino-half .pip{background:#173653}
+.domino-tile .domino-face{position:absolute;left:50%;top:calc(var(--hand-unit) + .25rem);width:calc(var(--hand-unit)*2);height:var(--hand-unit);transform:translate(-50%,-50%) rotate(90deg)}
+.domino-numbers{position:absolute;left:0;bottom:.3rem;width:100%;font-size:.8125rem;font-weight:650;line-height:1.2;text-align:center}
+.domino-tile:not(:disabled){touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab;border-color:var(--blue);background:#e3edff}
+.domino-tile.selected{background:#fff0ba;border-color:#866200;box-shadow:0 0 0 2px #ffe098}
+.domino-tile:disabled{background:#f5f6f8;border-color:#dde3e9;opacity:1}
+.domino-tile:disabled .domino-face{border-color:#99a3ab;box-shadow:none}
+.domino-tile.drag-origin{opacity:.3}
+.domino-tile.domino-drag-ghost{position:fixed;z-index:20;pointer-events:none;margin:0;min-height:0;background:#fff0ba;border-color:#866200;box-shadow:0 8px 24px #183d7038;opacity:.96;cursor:grabbing}
+.domino-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 10px;margin:4px 0 0}
+.domino-actions button{margin:0;padding:8px 9px;text-align:center}
+#domino-step{background:var(--blue);color:#fff;border:1px solid var(--blue);border-radius:9px;font-weight:650}
+.domino-play .domino-status{min-height:1.3em;margin:4px 0 0;font-size:.8125rem;line-height:1.35;color:var(--blue)}
+.domino-play .domino-notice{margin:5px 0;padding:7px 9px;border:1px solid #dbc690;border-radius:8px;background:#fff6dc;color:#67490b;font-size:.875rem;line-height:1.4}.domino-notice:empty{display:none}
+.domino-instruction:focus-visible,.domino-result h3:focus-visible{outline:3px solid #b26000;outline-offset:3px}
+
+.domino-result{margin-top:12px;padding:16px;border:1px solid #b5d4c3;border-radius:12px;background:#eaf5ef}
+.domino-result h3{font-family:Georgia,serif;font-size:1.5rem;line-height:1.3}
+.domino-result p{line-height:1.5;margin:10px 0}
+.domino-result details{margin-top:10px;font-size:.875rem}
+.domino-result summary{display:flex;align-items:center;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.domino-result button{max-width:100%}
+#domino-score-change{padding:8px 10px;border:1px solid #9cbca8;border-radius:8px;background:white;font-weight:650}
+.domino-options label{display:block;font-weight:650;margin:14px 0 7px;line-height:1.4}
+.domino-options select{display:block;width:100%;min-width:0;min-height:48px;padding:10px;font:inherit;color:var(--ink);border:1px solid var(--line);border-radius:8px;background:white}
+#domino-rules-dialog li,#domino-guide-dialog li{margin:10px 0;line-height:1.5}
+#domino-new-dialog .primary-button{width:100%}
+#domino-history-list{list-style:none;margin:14px 0;padding:0;display:flex;flex-direction:column;gap:8px}
+#domino-history-list li{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--line);border-radius:9px;background:#f5f7f5;font-size:.9375rem;line-height:1.4}
+#domino-history-list li[data-seat="0"],#domino-history-list li[data-seat="2"]{background:#e8f1ff;border-color:#a9c5e8}
+.domino-recent{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:10px 0;padding:0}
+.domino-recent li{display:flex;align-items:center;gap:8px;max-width:100%;font-size:.875rem;line-height:1.4}
+.domino-recent .domino-face{width:56px;height:29px}.domino-recent .domino-half{padding:2px;gap:1px}
+
+/* A dialog supplies enlargement on older iPads without the Fullscreen API. */
+#domino-zoom-dialog{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;padding:8px;padding-top:max(8px,env(safe-area-inset-top));padding-right:max(8px,env(safe-area-inset-right));padding-bottom:max(8px,env(safe-area-inset-bottom));padding-left:max(8px,env(safe-area-inset-left));overscroll-behavior:contain}
+.domino-zoom-heading{position:sticky;top:-8px;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:1280px;margin:auto;padding:4px 0;background:white}
+#domino-zoom-title{min-width:0;margin:0;padding:0;font-size:1.125rem;line-height:1.3}
+#close-domino-zoom{flex-shrink:0;min-height:44px;padding:8px 12px;font-size:.875rem}
+#domino-zoom-dialog .domino-zoom-tip{display:none}
+#domino-zoom-dialog .domino-play{max-width:1280px;margin:0 auto;padding:0;border:0;border-radius:0;box-shadow:none}
+#domino-zoom-dialog .play-heading{display:none}
+#domino-zoom-dialog .domino-topbar{margin:4px 0}
+#domino-zoom-dialog .game-toolbar{margin:4px 0}
+#domino-zoom-dialog .domino-view-tools{margin:4px 0 6px}
+#domino-zoom-dialog .domino-arena{height:clamp(9rem,calc(100vh - 42rem),24rem)}
+#domino-zoom-dialog .domino-dock{padding-top:5px;padding-bottom:5px}
+#domino-zoom-dialog .domino-score span{font-size:.8125rem}
+#domino-zoom-dialog .domino-table{padding:8px;gap:6px}
+
+@media(min-width:900px){
+ #domino-zoom-dialog .domino-body{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px}
+ #domino-zoom-dialog .domino-arena{height:clamp(12rem,calc(100vh - 24rem),32rem)}
+}
+@media(max-width:680px){
+ .domino-play{--hand-unit:2.4rem;padding:14px}
+ .domino-topbar{grid-template-columns:minmax(0,1fr);gap:4px}
+ .domino-play .domino-round{text-align:left}
+ .domino-play .game-toolbar button{font-size:.8125rem;padding:8px}
+ .domino-view-tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+ .domino-view-tools button{min-width:0;padding:4px;font-size:.8125rem;line-height:1.3}
+ .domino-table{grid-template-areas:"west north east" "arena arena arena" ". south .";grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:6px;border-width:6px;border-radius:22px}
+ .domino-seat{padding:5px 3px;font-size:.8125rem}
+ .domino-seat strong{font-size:.8125rem}
+ #domino-seat-2{flex-direction:column;gap:3px;min-height:0}
+ #domino-seat-0{grid-column:1/-1;min-height:30px;padding:4px;gap:3px 8px}
+ .seat-last .domino-face{display:none}
+ .domino-arena{height:240px}
+ .domino-hand{gap:4px}
+ .domino-score>div{padding:5px 8px;gap:5px}
+ .domino-score span{font-size:.8125rem}
+ .domino-actions{gap:3px 6px}
+ .domino-actions button{padding:7px 6px;font-size:.8125rem}
+ #domino-zoom-dialog .domino-table{padding:6px;gap:5px}
+}
+@media(max-height:500px){
+ #domino-zoom-dialog .domino-arena{height:12rem}
+ #domino-zoom-dialog .domino-body{grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:no-preference){
+ .domino-seat.just-played{animation:domino-seat-glow .5s ease-out}
+ .domino-placed.new-play{animation:domino-tile-entry .45s ease-out}
+ @keyframes domino-seat-glow{from{box-shadow:0 0 0 7px #ffe09880}to{box-shadow:0 0 0 3px #ffdf8c80}}
+ @keyframes domino-tile-entry{from{transform:translate(calc(-50% + var(--arrival-x)),calc(-50% + var(--arrival-y)));opacity:.25}to{transform:translate(-50%,-50%);opacity:1}}
+}
+
+.domino-guide-tip{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:10px 0;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#f4f8ff}
+.domino-guide-tip p{flex:1 1 200px;font-size:.875rem;line-height:1.4;margin:0}
+.domino-guide-tip button{min-width:44px;min-height:44px;font-size:.875rem}
+#domino-zoom-dialog .domino-guide-tip,#domino-zoom-dialog .domino-table-hint{display:none}
+.domino-options label.domino-sound-option{display:flex;align-items:center;gap:12px;min-height:48px;padding:12px;border:1px solid var(--line);border-radius:8px}
+.domino-sound-option input{flex-shrink:0;width:22px;height:22px}
