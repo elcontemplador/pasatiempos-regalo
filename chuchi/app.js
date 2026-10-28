@@ -1,3 +1,4 @@
+import {mountSpecialGame} from './special-games.js';
 import {mountCardGame} from './card-games.js';
 import {createStateSession} from './state-session.js?v=37';
 import {initChess} from './chess.js?v=36';
@@ -9,7 +10,7 @@ import {themes,photos,normalize,makeWordSearch,matchWord,newPuzzle,swapTiles,puz
 import {initQuiz} from './quiz.js?v=37';
 import {asRecord,readState,saveState} from './storage.js?v=22';
 import {initOffline} from './offline.js?v=22';
-const GAMES=['words','puzzle','quiz','letters','domino','chess','tute','mus'];
+const GAMES=['words','puzzle','quiz','letters','sudoku','domino','chess','tute','mus'];
 const $=id=>document.getElementById(id),KEY='regalo-chuchi-v1';
 import {icon} from './icons.js?v=22';
 let stored=readState(KEY);
@@ -146,7 +147,7 @@ $('tab-words').addEventListener('click',()=>switchMode('words'));$('tab-puzzle')
 $('tab-quiz').addEventListener('click',()=>switchMode('quiz'));
 $('tab-domino').addEventListener('click',()=>switchMode('domino'));
 $('tab-chess').addEventListener('click',()=>switchMode('chess'));
-$('tab-letters').addEventListener('click',()=>switchMode('letters'));
+$('tab-letters').addEventListener('click',()=>switchMode('letters'));$('tab-sudoku').addEventListener('click',()=>switchMode('sudoku'));
 $('tab-tute').addEventListener('click',()=>switchMode('tute'));$('tab-mus').addEventListener('click',()=>switchMode('mus'));
 function openDialog(id,trigger){const d=$(id);dialogTriggers.set(d,trigger);d.showModal();}
 $('show-photo').addEventListener('click',e=>{$('reference-title').textContent=photo.title;$('reference-photo').src=photo.src;$('reference-photo').alt=photo.alt;openDialog('photo-dialog',e.currentTarget);});
@@ -174,7 +175,7 @@ $('expand-puzzle').addEventListener('click',e=>{
 $('close-puzzle-zoom').addEventListener('click',()=>zoomDialog.close());
 zoomDialog.addEventListener('close',()=>{puzzleHome.append(puzzlePlay);$('expand-puzzle').hidden=false;});
 document.querySelectorAll('dialog').forEach(d=>{d.querySelectorAll('.dialog-close,.dialog-done').forEach(b=>b.addEventListener('click',()=>d.close()));d.addEventListener('close',()=>dialogTriggers.get(d)?.focus());d.addEventListener('click',e=>{if(e.target===d){const rect=d.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)d.close();}});});
-loadWords();loadPuzzle();renderThemes();renderPhotos();const quiz=initQuiz(),letters=initLetters(),domino=initDomino(openDialog),chess=initChess(openDialog),tute=mountCardGame($('tute-view'),{kind:'tute',storagePrefix:'regalo-chuchi-'}),mus=mountCardGame($('mus-view'),{kind:'mus',storagePrefix:'regalo-chuchi-'});switchMode(mode);updateMobileNav();
+loadWords();loadPuzzle();renderThemes();renderPhotos();const quiz=initQuiz(),letters=initLetters(),domino=initDomino(openDialog),chess=initChess(openDialog),tute=mountCardGame($('tute-view'),{kind:'tute',storagePrefix:'regalo-chuchi-'}),mus=mountCardGame($('mus-view'),{kind:'mus',storagePrefix:'regalo-chuchi-'});mountSpecialGame($('sudoku-view'),{person:'chuchi',storagePrefix:'regalo-chuchi',game:'sudoku'});switchMode(mode);updateMobileNav();
 initOffline();
 initSharing(openDialog);
 
@@ -192,6 +193,6 @@ $('surprise').addEventListener('click',()=>{
  }else if(next==='puzzle'){
   const available=photos.filter(p=>{const tiles=puzzleStates[`${p.id}-${size}`]?.tiles;return p.id!==photo.id&&(!validTiles(tiles)||!puzzleSolved(tiles));});
   const alternatives=photos.filter(p=>p.id!==photo.id);photo=pick(available.length?available:alternatives.length?alternatives:photos);loadPuzzle();renderPhotos();title=photo.title;
- }else if(next==='quiz')title=quiz.surprise();else if(next==='letters')title=letters.surprise();else title={chess:'Una partida de ajedrez',domino:'Dominó por parejas',tute:'Una partida de tute',mus:'Una partida de mus'}[next];
+ }else if(next==='quiz')title=quiz.surprise();else if(next==='letters')title=letters.surprise();else if(next==='sudoku')title='Sudoku';else title={chess:'Una partida de ajedrez',domino:'Dominó por parejas',tute:'Una partida de tute',mus:'Una partida de mus'}[next];
  switchMode(next);updateMobileNav();const heading=$(next==='words'?'word-title':next==='puzzle'?'puzzle-title':next==='quiz'?'quiz-title':next==='letters'?'letters-title':next+'-title');if(mobileLayout.matches)mobileGoTo(heading);else{heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'start'});}say(`Te propongo: ${title}. ¡A disfrutar!`);
 });

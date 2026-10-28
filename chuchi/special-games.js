@@ -2,18 +2,18 @@ import {makeSudoku, sudokuValid, connectFourNew, connectFourPlay, connectFourCom
 import {readState,saveState} from './storage.js';
 
 // The caller mounts exactly one recipient's game and keeps each prefix unique.
-export function mountSpecialGame(root,{person,storagePrefix}={}){
- if(!(root instanceof Element)||!['omar','leti'].includes(person)||!storagePrefix)throw new Error('Falta el contenedor, el destinatario o el prefijo de guardado');
- const key=storagePrefix+'-'+(person==='omar'?'sudoku':'connect-four')+'-v1';
+export function mountSpecialGame(root,{person,storagePrefix,game=person==='omar'?'sudoku':'connect-four'}={}){
+ if(!(root instanceof Element)||!['omar','leti','chuchi'].includes(person)||!['sudoku','connect-four'].includes(game)||!storagePrefix)throw new Error('Falta el contenedor, el destinatario o el prefijo de guardado');
+ const isSudoku=game==='sudoku', key=storagePrefix+'-'+game+'-v1';
  let previous=readState(key),selected=0,noteMode=false,status='',lastCell=null,sudokuZoom=false;
  const clone=x=>JSON.parse(JSON.stringify(x));
  const sudokuArray=(a,min,max)=>Array.isArray(a)&&a.length===81&&a.every(v=>Number.isInteger(v)&&v>=min&&v<=max);
  const sdkValid=x=>x&&sudokuArray(x.board,0,9)&&sudokuArray(x.puzzle,0,9)&&sudokuArray(x.solution,1,9)&&['calma','medio','reto'].includes(x.level)&&Array.isArray(x.notes)&&x.notes.length===81&&x.notes.every(a=>Array.isArray(a)&&a.every(v=>Number.isInteger(v)&&v>=1&&v<=9))&&x.solution.every((n,i)=>sudokuValid(x.solution,i,n)&&(!x.puzzle[i]||(x.puzzle[i]===n&&x.board[i]===n)))&&(!x.undo||(sudokuArray(x.undo.board,0,9)&&Array.isArray(x.undo.notes)&&x.undo.notes.length===81&&x.undo.notes.every(a=>Array.isArray(a)&&a.every(v=>Number.isInteger(v)&&v>=1&&v<=9))));
  function newSudoku(level){let x=makeSudoku(level);return {...x,board:[...x.puzzle],notes:Array.from({length:81},()=>[]),undo:null,previous:null};}
  const cfValid=x=>x&&Array.isArray(x.board)&&x.board.length===42&&x.board.every(v=>[0,1,2].includes(v))&&[1,2].includes(x.turn)&&[0,1,2].includes(x.winner)&&typeof x.draw==='boolean'&&['two','computer'].includes(x.mode);
- const valid=person==='omar'?sdkValid:cfValid;
+ const valid=isSudoku?sdkValid:cfValid;
  let baseline=JSON.stringify(previous);
- let state=person==='omar'?(sdkValid(previous)?previous:newSudoku('calma')):(cfValid(previous)?previous:connectFourNew('two'));
+ let state=isSudoku?(sdkValid(previous)?previous:newSudoku('calma')):(cfValid(previous)?previous:connectFourNew('two'));
  const save=()=>{const disk=readState(key),serialized=JSON.stringify(disk);if(serialized!==baseline&&valid(disk)){state=disk;baseline=serialized;status='Esta partida se ha actualizado en otra pestaña.';return false;}const ok=saveState(key,state);if(ok)baseline=JSON.stringify(state);return ok;};
  save();
  const label=(n)=>n===1?'rojas':'amarillas';
@@ -22,7 +22,7 @@ export function mountSpecialGame(root,{person,storagePrefix}={}){
    return `<button type="button" class="sp-cell${given?' sp-given':''}${i===selected?' sp-selected':''}${i%9===2||i%9===5?' sp-line-r':''}${Math.floor(i/9)===2||Math.floor(i/9)===5?' sp-line-b':''}" data-cell="${i}" aria-label="${title}" aria-pressed="${i===selected}">${value||`<span class="sp-notes">${notes.map(n=>`<span>${n}</span>`).join('')}</span>`}</button>`;
  }
  function renderSudoku(){
- root.innerHTML=`<div class="sp-game"><div class="sp-heading"><div><p class="sp-kicker">UN JUEGO PARA OMAR</p><h2 id="letters-title">Sudoku</h2><p>Elige una casilla y coloca un número del 1 al 9.</p></div><span class="sp-badge">9 × 9</span></div>
+ root.innerHTML=`<div class="sp-game"><div class="sp-heading"><div><p class="sp-kicker">UN JUEGO PARA ${person.toUpperCase()}</p><h2 id="${person==='omar'?'letters':'sudoku'}-title">Sudoku</h2><p>Elige una casilla y coloca un número del 1 al 9.</p></div><span class="sp-badge">9 × 9</span></div>
  <div class="sp-toolbar"><label>Dificultad <select data-action="level"><option value="calma" ${state.level==='calma'?'selected':''}>Con calma</option><option value="medio" ${state.level==='medio'?'selected':''}>Un poco más</option><option value="reto" ${state.level==='reto'?'selected':''}>Un reto</option></select></label><button type="button" data-action="new">Nueva partida</button><button type="button" data-action="recover" ${state.previous?'':'disabled'}>Recuperar anterior</button></div>
  <button type="button" class="sp-zoom-toggle" data-action="zoom" aria-pressed="${sudokuZoom}" aria-controls="sp-sudoku-board">${sudokuZoom?'Ver tablero completo':'Ampliar casillas'}</button>${sudokuZoom?'<p class="sp-zoom-help">Desliza el tablero hacia los lados para verlo completo.</p>':''}<div class="sp-sudoku-scroll"><div id="sp-sudoku-board" class="sp-sudoku${sudokuZoom?' sp-sudoku-zoomed':''}" role="group" aria-label="Tablero de sudoku">${state.board.map((_,i)=>sudokuCell(i)).join('')}</div></div>
  <div class="sp-digits" aria-label="Números para colocar">${Array.from({length:9},(_,i)=>`<button type="button" data-number="${i+1}" aria-label="Colocar ${i+1}">${i+1}</button>`).join('')}</div>
@@ -36,7 +36,7 @@ export function mountSpecialGame(root,{person,storagePrefix}={}){
  <div class="sp-connect" role="group" aria-label="Tablero de cuatro en raya. ${turn}">${state.board.map((v,i)=>`<div class="sp-hole sp-hole-${v}" data-play-col="${i%7}" role="img" aria-label="Fila ${Math.floor(i/7)+1}, columna ${i%7+1}: ${v?label(v):'vacía'}" title="Fila ${Math.floor(i/7)+1}, columna ${i%7+1}: ${v?label(v):'vacía'}">${v===1?'<span>●</span>':v===2?'<span>✦</span>':''}</div>`).join('')}</div>
  <p class="sp-caption">${state.mode==='two'?'Rojas y amarillas juegan en el mismo dispositivo.':'Tú juegas con las rojas; el ordenador, con las amarillas.'}</p></div>`;
  }
- function render(){const oldScroll=root.querySelector('.sp-sudoku-scroll')?.scrollLeft||0;const a=document.activeElement,inside=root.contains(a),d=inside?a.dataset:{};const selector=d.cell!==undefined?`[data-cell="${d.cell}"]`:d.number!==undefined?`[data-number="${d.number}"]`:d.col!==undefined?`[data-col="${d.col}"]`:d.action?`[data-action="${d.action}"]`:null;if(person==='omar')renderSudoku();else renderConnect();const scroller=root.querySelector('.sp-sudoku-scroll');if(scroller)scroller.scrollLeft=oldScroll;if(inside){let focus=selector&&root.querySelector(selector);if(!focus||focus.disabled)focus=person==='omar'?root.querySelector(`[data-cell="${selected}"]`):root.querySelector('[data-action="new"]');focus?.focus({preventScroll:true});}}
+ function render(){const oldScroll=root.querySelector('.sp-sudoku-scroll')?.scrollLeft||0;const a=document.activeElement,inside=root.contains(a),d=inside?a.dataset:{};const selector=d.cell!==undefined?`[data-cell="${d.cell}"]`:d.number!==undefined?`[data-number="${d.number}"]`:d.col!==undefined?`[data-col="${d.col}"]`:d.action?`[data-action="${d.action}"]`:null;if(isSudoku)renderSudoku();else renderConnect();const scroller=root.querySelector('.sp-sudoku-scroll');if(scroller)scroller.scrollLeft=oldScroll;if(inside){let focus=selector&&root.querySelector(selector);if(!focus||focus.disabled)focus=isSudoku?root.querySelector(`[data-cell="${selected}"]`):root.querySelector('[data-action="new"]');focus?.focus({preventScroll:true});}}
  window.addEventListener('storage',event=>{if(event.key!==key)return;const latest=readState(key);if(valid(latest)){state=latest;baseline=JSON.stringify(latest);status='Esta partida se ha actualizado en otra pestaña.';render();}});
  function changeValue(value){if(state.puzzle[selected]){status='Esta casilla ya viene dada. Elige otra.';render();return;}
    state.undo={board:[...state.board],notes:clone(state.notes)};
@@ -45,13 +45,13 @@ export function mountSpecialGame(root,{person,storagePrefix}={}){
    status=state.board.every((v,i)=>v===state.solution[i])?'¡Sudoku completado!':value?'Número colocado.':'Casilla borrada.';save();render();
  }
  function playColumn(column){const old=state;state=connectFourPlay(state,column);if(state===old)return;if(state.mode==='computer'&&!state.winner&&!state.draw)state=connectFourComputer(state);status='';save();render();}
- root.addEventListener('click',event=>{const hole=event.target.closest('[data-play-col]');if(person==='leti'&&hole&&root.contains(hole)){playColumn(Number(hole.dataset.playCol));return;}const b=event.target.closest('button');if(!b||!root.contains(b))return;b.focus({preventScroll:true});
+ root.addEventListener('click',event=>{const hole=event.target.closest('[data-play-col]');if(!isSudoku&&hole&&root.contains(hole)){playColumn(Number(hole.dataset.playCol));return;}const b=event.target.closest('button');if(!b||!root.contains(b))return;b.focus({preventScroll:true});
   if(b.dataset.cell!==undefined){selected=Number(b.dataset.cell);status='';render();root.querySelector(`[data-cell="${selected}"]`)?.focus();return;}
   if(b.dataset.number){changeValue(Number(b.dataset.number));return;}
   if(b.dataset.col!==undefined){playColumn(Number(b.dataset.col));return;}
   switch(b.dataset.action){
    case 'zoom':sudokuZoom=!sudokuZoom;render();return;
-   case 'new': {const old=clone(state);old.previous=null;state=person==='omar'?newSudoku(state.level):connectFourNew(state.mode);state.previous=old;status='Nueva partida preparada.';break;}
+   case 'new': {const old=clone(state);old.previous=null;state=isSudoku?newSudoku(state.level):connectFourNew(state.mode);state.previous=old;status='Nueva partida preparada.';break;}
    case 'recover': {if(!valid(state.previous)){state.previous=null;status='No hay una partida anterior recuperable.';break;}const old=clone(state);old.previous=null;state=state.previous;state.previous=old;status='Partida anterior recuperada.';break;}
    case 'note':noteMode=!noteMode;status=noteMode?'Modo notas activado.':'Modo notas desactivado.';break;
    case 'erase':changeValue(0);return;
@@ -61,7 +61,7 @@ export function mountSpecialGame(root,{person,storagePrefix}={}){
    default:return;
   }save();render();
  });
- root.addEventListener('change',event=>{if(event.target.dataset.action==='level'&&person==='omar'){const old=clone(state);old.previous=null;state=newSudoku(event.target.value);state.previous=old;selected=0;status='Nueva dificultad y tablero preparados.';save();render();}else if(event.target.dataset.action==='mode'&&person==='leti'){const old=clone(state);old.previous=null;state=connectFourNew(event.target.value);state.previous=old;status='Modo cambiado. Nueva partida preparada.';save();render();}});
- root.addEventListener('keydown',event=>{const cell=event.target.closest('[data-cell]');if(person!=='omar'||!cell||event.ctrlKey||event.metaKey||event.altKey)return;selected=Number(cell.dataset.cell);const key=event.key;if(/^[1-9]$/.test(key)){event.preventDefault();changeValue(Number(key));root.querySelector(`[data-cell="${selected}"]`)?.focus();}else if(['Backspace','Delete','0'].includes(key)){event.preventDefault();changeValue(0);root.querySelector(`[data-cell="${selected}"]`)?.focus();}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(key)){event.preventDefault();const row=Math.floor(selected/9),col=selected%9;selected=key==='ArrowLeft'?row*9+Math.max(0,col-1):key==='ArrowRight'?row*9+Math.min(8,col+1):key==='ArrowUp'?Math.max(0,row-1)*9+col:Math.min(8,row+1)*9+col;render();root.querySelector(`[data-cell="${selected}"]`)?.focus();}});
+ root.addEventListener('change',event=>{if(event.target.dataset.action==='level'&&isSudoku){const old=clone(state);old.previous=null;state=newSudoku(event.target.value);state.previous=old;selected=0;status='Nueva dificultad y tablero preparados.';save();render();}else if(event.target.dataset.action==='mode'&&!isSudoku){const old=clone(state);old.previous=null;state=connectFourNew(event.target.value);state.previous=old;status='Modo cambiado. Nueva partida preparada.';save();render();}});
+ root.addEventListener('keydown',event=>{const cell=event.target.closest('[data-cell]');if(!isSudoku||!cell||event.ctrlKey||event.metaKey||event.altKey)return;selected=Number(cell.dataset.cell);const key=event.key;if(/^[1-9]$/.test(key)){event.preventDefault();changeValue(Number(key));root.querySelector(`[data-cell="${selected}"]`)?.focus();}else if(['Backspace','Delete','0'].includes(key)){event.preventDefault();changeValue(0);root.querySelector(`[data-cell="${selected}"]`)?.focus();}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(key)){event.preventDefault();const row=Math.floor(selected/9),col=selected%9;selected=key==='ArrowLeft'?row*9+Math.max(0,col-1):key==='ArrowRight'?row*9+Math.min(8,col+1):key==='ArrowUp'?Math.max(0,row-1)*9+col:Math.min(8,row+1)*9+col;render();root.querySelector(`[data-cell="${selected}"]`)?.focus();}});
  render();return {getState:()=>clone(state)};
 }
