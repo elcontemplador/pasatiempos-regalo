@@ -10,7 +10,7 @@ function half(n){const root=document.createElement('span');root.className='domin
 function face(a,b){const root=document.createElement('span');root.className='domino-face';root.setAttribute('aria-hidden','true');root.append(half(a),half(b));return root;}
 export function initDomino(openDialog){
  const raw=readState(KEY),restoredMatch=restore(raw.match);let dragController,tableGeometry,boardSignature='';
- let s=restoredMatch||newMatch(),previous=restore(raw.previous),undo=restoreUndo(raw.undo,s),selected=null,timer=null,active=false,paused=restoredMatch&&raw.paused===true,lastRendered=-1,lastWritten=JSON.stringify(raw);
+ let s=restoredMatch||newMatch(),previous=restore(raw.previous),undo=restoreUndo(raw.undo,s),selected=null,timer=null,active=false,paused=!!restoredMatch&&raw.paused===true,lastRendered=-1,lastWritten=JSON.stringify(raw);
  const PREF_KEY='regalo-leti-domino-preferences-v1';
  const normalizePrefs=v=>({speed:['normal','slow','step'].includes(v.speed)?v.speed:'normal',sound:v.sound===true,guideDismissed:v.guideDismissed===true});
  let prefs=normalizePrefs(readState(PREF_KEY)),audio=null,overview=false,viewScale=1,lastArenaHeight=0,resultPending=false,resultTimer=null,keyboardInput=false;
@@ -24,7 +24,7 @@ export function initDomino(openDialog){
  function preview(tile,move){
   clearPreview();if(tile===null||!move||paused||s.turn!==0||!tableGeometry)return;
   const candidate=step(s,{type:'play',seat:0,...move}),first=candidate.history.find(e=>e.type==='play'),g=tableLayout(candidate.chain,first?.tile,tableGeometry.width,tableGeometry.unit),p=g.poses.find(p=>p.tile===tile),t=candidate.chain.find(t=>t.tile===tile);
-  const item=document.createElement('li');item.id='domino-drop-preview';item.className='domino-preview';item.setAttribute('aria-hidden','true');Object.assign(item.style,{left:(p.x-g.origin.x+tableGeometry.origin.x)+'px',top:(p.y-g.origin.y+tableGeometry.origin.y)+'px',width:p.width+'px',height:p.height+'px'});
+  const item=document.createElement('div');item.id='domino-drop-preview';item.className='domino-preview';item.setAttribute('aria-hidden','true');Object.assign(item.style,{left:(p.x-g.origin.x+tableGeometry.origin.x)+'px',top:(p.y-g.origin.y+tableGeometry.origin.y)+'px',width:p.width+'px',height:p.height+'px'});
   const f=face(t.a,t.b);Object.assign(f.style,{width:2*g.unit+'px',height:g.unit+'px',transform:'translate(-50%,-50%) rotate('+p.angle+'deg)'});item.append(f);$('domino-chain').append(item);
   const caption=$('domino-drop-caption'),arena=$('domino-arena');caption.textContent=move.side==='start'?'Encajará en el centro':'Encajará en '+(move.side==='left'?'A · '+s.chain[0].a:'B · '+s.chain.at(-1).b);caption.hidden=false;caption.style.left=(arena.scrollLeft+arena.clientWidth/2)+'px';caption.style.top=(arena.scrollTop+8)+'px';
  }
@@ -115,7 +115,7 @@ export function initDomino(openDialog){
   const oldLeft=arena.scrollLeft,oldTop=arena.scrollTop;clearPreview();board.replaceChildren();board.style.width=tableGeometry.width+'px';board.style.height=tableGeometry.height+'px';
   viewScale=overview?Math.max(.75,Math.min(1,(arena.clientWidth-8)/tableGeometry.width,(arena.clientHeight-8)/tableGeometry.height)):1;board.style.transform='scale('+viewScale+')';const surface=$('domino-surface');surface.style.width=tableGeometry.width*viewScale+'px';surface.style.height=tableGeometry.height*viewScale+'px';lastArenaHeight=arena.clientHeight;$('domino-play').classList.toggle('overview-mode',overview);$('domino-fit').textContent=overview?'Ver detalle':'Mesa completa';$('domino-fit').setAttribute('aria-pressed',String(overview));
   for(const p of tableGeometry.poses){
-   const t=s.chain[p.index],item=document.createElement('li');item.className='domino-placed'+(s.history.at(-1)?.tile===t.tile?' last-play':'');if(active&&lastRendered!==s.actions.length&&s.history.at(-1)?.tile===t.tile)item.classList.add('new-play');item.style.setProperty('--arrival-x',(t.seat===1?-55:t.seat===3?55:0)+'px');item.style.setProperty('--arrival-y',(t.seat===2?-55:t.seat===0?55:0)+'px');item.dataset.tile=t.tile;item.dataset.seat=t.seat;item.dataset.index=p.index;item.setAttribute('aria-label',names[t.seat]+': '+t.a+' con '+t.b);
+   const t=s.chain[p.index],item=document.createElement('div');item.setAttribute('role','img');item.className='domino-placed'+(s.history.at(-1)?.tile===t.tile?' last-play':'');if(active&&lastRendered!==s.actions.length&&s.history.at(-1)?.tile===t.tile)item.classList.add('new-play');item.style.setProperty('--arrival-x',(t.seat===1?-55:t.seat===3?55:0)+'px');item.style.setProperty('--arrival-y',(t.seat===2?-55:t.seat===0?55:0)+'px');item.dataset.tile=t.tile;item.dataset.seat=t.seat;item.dataset.index=p.index;item.setAttribute('aria-label',names[t.seat]+': '+t.a+' con '+t.b);
    Object.assign(item.style,{left:p.x+'px',top:p.y+'px',width:p.width+'px',height:p.height+'px'});
    const f=face(t.a,t.b);Object.assign(f.style,{width:2*unit+'px',height:unit+'px',transform:'translate(-50%,-50%) rotate('+p.angle+'deg)'});item.append(f);board.append(item);
   }

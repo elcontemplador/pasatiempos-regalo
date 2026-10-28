@@ -10,8 +10,8 @@
 <meta property="og:type" content="website"><meta property="og:title" content="Los pasatiempos de Omar"><meta property="og:description" content="Juegos y recuerdos para Omar"><meta property="og:url" content="https://elcontemplador.github.io/pasatiempos-regalo/omar/"><meta property="og:image" content="https://elcontemplador.github.io/pasatiempos-regalo/omar/assets/header.jpg"><link rel="apple-touch-icon" href="./apple-touch-icon.png">
 </head>
 <body data-person="omar">
- <a class="skip-link" href="#main">Saltar al juego</a>
- <div id="mobile-nav" class="mobile-nav" hidden><span id="mobile-game-label"></span><button id="mobile-games" class="comfort-button">Cambiar juego ↑</button></div>
+ <a class="skip-link" tabindex="0" href="#main">Saltar al juego</a>
+ <div id="mobile-nav" class="mobile-nav" role="navigation" aria-label="Navegación del juego" hidden><span id="mobile-game-label"></span><button id="mobile-games" class="comfort-button">Cambiar juego ↑</button></div>
  <div class="birthday-stripe"></div>
  <div class="shell">
   <header class="masthead">
@@ -29,11 +29,11 @@
    <button id="tab-tute" class="game-tab" aria-pressed="false"><span class="tab-icon" aria-hidden="true">R C</span><span>Tute<small>Triunfos, cantes y compañía</small></span></button>
    <button id="tab-mus" class="game-tab" aria-pressed="false"><span class="tab-icon" aria-hidden="true">40</span><span>Mus<small>Una mano y un buen envite</small></span></button>
   </nav>
-  <div class="comfort-tools" aria-label="A tu gusto"><button id="surprise" class="comfort-button"><span aria-hidden="true">✦</span> Sorpréndeme</button><button id="large-text" class="comfort-button" aria-pressed="false"><span aria-hidden="true">A+</span> Letra grande</button></div>
+  <div class="comfort-tools" role="region" aria-label="A tu gusto"><button id="surprise" class="comfort-button"><span aria-hidden="true">✦</span> Sorpréndeme</button><button id="large-text" class="comfort-button" aria-pressed="false"><span aria-hidden="true">A+</span> Letra grande</button></div>
   <main id="main" tabindex="-1">
    <section id="words-view" aria-labelledby="word-title">
     <div class="words-layout">
-     <aside class="theme-side"><h2 class="section-label">¿Qué te apetece buscar?</h2><div id="themes" class="theme-list"></div><button id="word-jump" class="comfort-button mobile-only">Ir al tablero ↓</button><p class="side-note">Cada tablero es diferente.<br>El buen rato lo pones tú.</p></aside>
+     <div class="theme-side" role="group" aria-labelledby="themes-title"><h2 id="themes-title" class="section-label">¿Qué te apetece buscar?</h2><div id="themes" class="theme-list"></div><button id="word-jump" class="comfort-button mobile-only">Ir al tablero ↓</button><p class="side-note">Cada tablero es diferente.<br>El buen rato lo pones tú.</p></div>
      <div class="play-area">
       <div class="play-heading"><div><h2 id="word-title"></h2><p id="word-description"></p></div><span class="game-tag">SOPA DE LETRAS</span></div>
       <div class="game-toolbar"><fieldset class="segmented"><legend class="sr-only">Dificultad de la sopa</legend><label><input type="radio" name="difficulty" value="calma" checked><span>Con calma</span></label><label><input type="radio" name="difficulty" value="reto"><span>Un reto</span></label></fieldset><button class="text-button" id="new-word">↻ Otro tablero</button></div>
@@ -47,7 +47,7 @@
     </div>
    </section>
    <section id="puzzle-view" hidden aria-labelledby="puzzle-title">
-    <div class="puzzle-layout"><aside class="photo-side"><h2 class="section-label">Tu recuerdo</h2><div class="chosen-memory"><img id="chosen-photo" alt=""><div><p id="chosen-title"></p><p id="photo-credit" class="photo-credit" hidden></p><button id="change-photo" class="comfort-button">Cambiar foto <span aria-hidden="true">↗</span></button></div></div></aside>
+    <div class="puzzle-layout"><div class="photo-side" role="group" aria-labelledby="memory-title"><h2 id="memory-title" class="section-label">Tu recuerdo</h2><div class="chosen-memory"><img id="chosen-photo" alt=""><div><p id="chosen-title"></p><p id="photo-credit" class="photo-credit" hidden></p><button id="change-photo" class="comfort-button">Cambiar foto <span aria-hidden="true">↗</span></button></div></div></div>
      <div id="puzzle-play" class="play-area"><div class="play-heading"><div><h2 id="puzzle-title">Una sonrisa de hoy</h2><p>Vamos a poner cada pieza en su sitio.</p></div><span class="game-tag">PUZLE DE FOTOS</span></div>
       <div class="game-toolbar"><fieldset class="segmented"><legend class="sr-only">Número de piezas</legend><label><input type="radio" name="pieces" value="3" checked><span>9 piezas</span></label><label><input type="radio" name="pieces" value="4"><span>16 piezas</span></label></fieldset><button class="text-button" id="new-puzzle">↻ Mezclar</button><button class="comfort-button" id="expand-puzzle" aria-haspopup="dialog">Ampliar puzle</button></div>
       <div id="puzzle-recovery-tools" class="recovery-tools" hidden><button id="puzzle-recover" class="text-button recovery-button">↶ Recuperar puzle anterior</button></div>
@@ -59,7 +59,7 @@
    </section>
    <section id="quiz-view" hidden aria-labelledby="quiz-title">
     <div class="quiz-layout">
-     <aside><h2 class="section-label">Elige un tema</h2><div id="quiz-topics" class="theme-list"></div><p class="side-note">Para jugar solo<br>o en buena compañía.</p></aside>
+     <div role="group" aria-labelledby="quiz-topics-title"><h2 id="quiz-topics-title" class="section-label">Elige un tema</h2><div id="quiz-topics" class="theme-list"></div><p class="side-note">Para jugar solo<br>o en buena compañía.</p></div>
      <div class="play-area quiz-play">
       <div class="play-heading"><div><h2 id="quiz-title"></h2><p id="quiz-description"></p></div><span class="game-tag">TRIVIAL</span></div>
      <p id="quiz-sync-notice" class="sync-notice" role="status" aria-live="polite"></p>
@@ -92,7 +92,7 @@
      <div class="domino-body">
       <div id="domino-table" class="domino-table" aria-label="Mesa de cuatro jugadores">
        <div id="domino-seat-2" class="domino-seat"></div><div id="domino-seat-1" class="domino-seat"></div>
-       <div id="domino-arena" class="domino-arena" tabindex="0" aria-label="Mesa de dominó. Desliza para recorrer la cadena."><div id="domino-surface"><ol id="domino-chain" class="domino-chain" aria-label="Cadena de fichas, del extremo A al B"></ol></div><p id="domino-drop-caption" class="domino-drop-caption" aria-live="polite" hidden></p></div>
+       <div id="domino-arena" class="domino-arena" tabindex="0" aria-label="Mesa de dominó. Desliza para recorrer la cadena."><div id="domino-surface"><div id="domino-chain" class="domino-chain" role="group" aria-label="Fichas y extremos de la mesa, de A a B"></div></div><p id="domino-drop-caption" class="domino-drop-caption" aria-live="polite" hidden></p></div>
        <div id="domino-seat-3" class="domino-seat"></div><div id="domino-seat-0" class="domino-seat"></div>
       </div>
       <p class="domino-table-hint">Suelta la ficha junto a la cadena o dentro de la mesa. El destino se ilumina antes de colocarla.</p>
