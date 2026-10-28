@@ -125,7 +125,6 @@ $('tab-letters').addEventListener('click',()=>switchMode('letters'));
 function openDialog(id,trigger){const d=$(id);dialogTriggers.set(d,trigger);d.showModal();}
 $('show-photo').addEventListener('click',e=>{$('reference-title').textContent=photo.title;$('reference-photo').src=photo.src;$('reference-photo').alt=photo.alt;openDialog('photo-dialog',e.currentTarget);});
 $('change-photo').addEventListener('click',e=>openDialog('gallery-dialog',e.currentTarget));
-$('birthday-message').addEventListener('click',e=>openDialog('birthday-dialog',e.currentTarget));
 $('install-help').addEventListener('click',e=>openDialog('help-dialog',e.currentTarget));
 // Move the existing board: enlargement never starts or duplicates a game.
 const puzzlePlay=$('puzzle-play'),puzzleHome=puzzlePlay.parentElement,zoomDialog=$('puzzle-zoom-dialog');

@@ -2,6 +2,8 @@ const VERSION='22';
 export function initOffline(){
  const label=document.getElementById('offline-status'),retry=document.getElementById('offline-retry');
  let registration=null,hasReport=false,retryTimer;
+ let previousController=navigator.serviceWorker?.controller;
+ document.getElementById('apply-update')?.addEventListener('click',()=>window.location.reload());
  function unavailable(){if(!hasReport){label.dataset.state='unavailable';label.textContent='No se ha podido preparar el juego sin conexión. Puedes seguir jugando con internet.';retry.hidden=false;}}
  function ask(){navigator.serviceWorker.controller?.postMessage({type:'PREPARE_OFFLINE'});}
  async function register(){
@@ -20,7 +22,10 @@ export function initOffline(){
   label.textContent=text[data.state];retry.hidden=!['partial','unavailable'].includes(data.state);
   if(data.state==='partial'&&navigator.onLine)retryTimer=setTimeout(ask,30000);
  });
- navigator.serviceWorker.addEventListener('controllerchange',()=>{hasReport=false;ask();});
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  if(previousController&&previousController!==navigator.serviceWorker.controller){const notice=document.getElementById('update-notice');if(notice)notice.hidden=false;}
+  previousController=navigator.serviceWorker.controller;hasReport=false;ask();
+ });
  window.addEventListener('online',()=>{if(navigator.serviceWorker.controller)ask();else register();});
  retry.addEventListener('click',async()=>{retry.hidden=true;label.textContent='Comprobando las descargas…';if(registration&&navigator.serviceWorker.controller){try{await registration.update();}catch{}ask();}else await register();});
  register();

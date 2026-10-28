@@ -1,4 +1,4 @@
-const VERSION='22',CACHE='regalo-chuchi-vd4a5a200253a';
+const VERSION='22',CACHE='regalo-chuchi-vfe783c44e8ce';
 const CORE=['./state-session.js?v=37','./chess.js?v=36','./chess-engine.js?v=35','./chess-ai-worker.js?v=35','./chess-pieces.js?v=36','./chess.css?v=37','./vendor/chess.js?v=1.4.0','./domino-layout.js?v=33','./domino-drag.js?v=34','./domino.js?v=34','./domino-engine.js?v=31','./domino.css?v=37','./share.js?v=22','./recovery.js?v=28','./','./index.html','./style.css?v=37','./app.js?v=37','./engine.js?v=28','./engine.js','./quiz.js?v=37','./quiz-data.js?v=29','./quiz-engine.js?v=22','./storage.js?v=22','./offline.js?v=22','./icons.js?v=22','./letters.js?v=37','./letters-engine.js?v=22','./letters-data.js?v=22','./icon.svg','./manifest.webmanifest'];
 const PHOTOS=["./assets/photos/caja-nido.jpg","./assets/photos/caja-nido.thumb.jpg","./assets/photos/ave-tejado.jpg","./assets/photos/ave-tejado.thumb.jpg","./assets/photos/abejaruco.jpg","./assets/photos/abejaruco.thumb.jpg","./assets/photos/petirrojo.jpg","./assets/photos/petirrojo.thumb.jpg","./assets/photos/ciguena.jpg","./assets/photos/ciguena.thumb.jpg","./assets/header.jpg"];
 const ASSETS=[...PHOTOS];
@@ -30,6 +30,10 @@ function prepareAssets(){
   await Promise.all(ASSETS.map(async path=>{
    try{if(await cache.match(path))return;await cache.put(path,await download(path));}catch{/* Keep the shell and other photos usable; retry later. */}
   }));
+  // Retirar generaciones anteriores solo cuando la copia actual está completa.
+  if((await status(false)).state==='ready'){
+   try{await Promise.all((await caches.keys()).filter(key=>key.startsWith('regalo-chuchi-v')&&key!==CACHE).map(key=>caches.delete(key)));}catch{/* Volver a intentar la limpieza cuando se prepare de nuevo. */}
+  }
   await broadcast(false);
  })().catch(()=>broadcast(false)).finally(()=>{preparation=null;});
  return preparation;
@@ -39,7 +43,7 @@ self.addEventListener('install',event=>{
  event.waitUntil((async()=>{const responses=await Promise.all(CORE.map(download));const cache=await caches.open(CACHE);await Promise.all(CORE.map((path,i)=>cache.put(path,responses[i])));await self.skipWaiting();})());
 });
 self.addEventListener('activate',event=>{
- // Retain earlier caches for pages that are still open with older module URLs.
+ // Conservar las anteriores hasta completar las descargas de esta generación.
  event.waitUntil(self.clients.claim());
 });
 self.addEventListener('message',event=>{
@@ -54,7 +58,7 @@ self.addEventListener('fetch',event=>{
    try{const response=await fetch(request);if(response.ok)return response;}catch{}
    return (await current.match('./index.html'))||Response.error();
   }
-  // Exact URL match, current generation first; legacy assets are only a fallback.
+  // Solo esta generación: nunca reutilizar fotos antiguas o de otro regalo.
   let cached;try{cached=await current.match(request);}catch{}if(cached)return cached;
   try{const response=await fetch(request);if(response.ok&&managed.has(request.url)){try{await current.put(request,response.clone());}catch{/* A cache quota error must not break a successful online response. */}}return response;}catch{return Response.error();}
  })());
