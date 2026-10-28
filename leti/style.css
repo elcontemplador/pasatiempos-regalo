@@ -122,3 +122,7 @@ dialog{max-height:90vh;max-height:90dvh}
 
 .board-zoom-help{font-size:.875rem;line-height:1.4;color:var(--muted);margin:0 0 8px}.word-grid-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}.board-zoom{margin-bottom:6px}
 @media(max-width:680px){.word-grid.word-grid-zoomed{width:470px;max-width:none;grid-template-columns:repeat(10,minmax(0,1fr));overflow:visible}.word-grid-zoomed .letter{font-size:1.2rem}}
+
+/* Ayuda de ampliación cerca de los tableros en pantallas pequeñas. */
+.mobile-board-tip{display:none}
+@media(max-width:680px){.mobile-board-tip{display:block;font-size:.875rem;line-height:1.45;color:var(--ink);margin:4px 0 8px}#word-zoom,#expand-chess{min-height:44px;padding:9px 13px;border:1px solid var(--blue);border-radius:8px;background:var(--pale);color:var(--ink);font-size:.9375rem;font-weight:700}#word-zoom[aria-pressed="true"]{background:var(--blue);color:#fff}}

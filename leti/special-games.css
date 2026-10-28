@@ -15,3 +15,5 @@
 .sp-sudoku-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}.sp-zoom-toggle{display:none}.sp-zoom-help{font-size:.875rem;line-height:1.4;margin:0 0 8px}.sp-zoom-toggle{min-height:44px;margin:0 0 8px}
 @media(max-width:680px){.sp-zoom-toggle{display:inline-flex;align-items:center}.sp-sudoku.sp-sudoku-zoomed{width:410px;max-width:none}.sp-sudoku-zoomed .sp-cell{font-size:1.3rem}.sp-sudoku-zoomed .sp-notes{font-size:.65rem}}
 .sp-game .sp-zoom-toggle{border:1px solid var(--line,#b8c8db);border-radius:8px;padding:8px 11px;background:var(--paper,#fff);color:var(--ink,#173653);font-weight:650}.sp-game .sp-zoom-toggle[aria-pressed="true"]{background:var(--blue,#244d94);color:#fff}
+
+@media(max-width:680px){.sp-game .sp-zoom-toggle{border-color:var(--blue,#244d94);background:var(--pale,#edf3fc);font-size:.9375rem;font-weight:700}}
