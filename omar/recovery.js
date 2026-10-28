@@ -7,7 +7,7 @@ export function wordRecovery(value,words){
  if(new Set(value.found).size!==value.found.length||!value.found.every(word=>known.has(word)))return null;
  const paths={};
  for(const word of value.found){const cells=value.paths?.[word];if(Array.isArray(cells)&&cells.every(n=>Number.isSafeInteger(n)&&n>=0))paths[word]=[...cells];}
- return {seed:value.seed,found:[...value.found],paths};
+ return {seed:value.seed,found:[...value.found],paths,...(value.version===2?{version:2}:{})};
 }
 export function puzzleRecovery(value,size){
  const tiles=value?.tiles;

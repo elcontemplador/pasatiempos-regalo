@@ -126,3 +126,7 @@ dialog{max-height:90vh;max-height:90dvh}
 /* Ayuda de ampliación cerca de los tableros en pantallas pequeñas. */
 .mobile-board-tip{display:none}
 @media(max-width:680px){.mobile-board-tip{display:block;font-size:.875rem;line-height:1.45;color:var(--ink);margin:4px 0 8px}#word-zoom,#expand-chess{min-height:44px;padding:9px 13px;border:1px solid var(--blue);border-radius:8px;background:var(--pale);color:var(--ink);font-size:.9375rem;font-weight:700}#word-zoom[aria-pressed="true"]{background:var(--blue);color:#fff}}
+
+/* Los tableros nuevos ajustan sus columnas a las palabras; el modo ampliado mantiene celdas táctiles. */
+.word-grid{grid-template-columns:repeat(var(--word-cols,10),minmax(0,1fr))}
+@media(max-width:680px){.word-grid{grid-template-columns:repeat(var(--word-cols,10),minmax(0,1fr))}.word-grid.word-grid-zoomed{width:calc(var(--word-cols,10)*47px);grid-template-columns:repeat(var(--word-cols,10),minmax(0,1fr)}}

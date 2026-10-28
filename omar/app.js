@@ -26,7 +26,7 @@ const gameSession=createStateSession(KEY,['wordStates','puzzleStates'],adoptGame
 const recoverySession=createStateSession(RECOVERY_KEY,['words','puzzles'],value=>{recoveries=cleanRecoveries(value,themes,photos);if(board)paintWords();if(puzzle)paintPuzzle();});
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 function adoptGames(value,external){
- const ownWord=board?{seed:board.seed,found,paths:foundPaths}:null,ownPuzzle=puzzle?{tiles:puzzle,moves}:null;
+ const ownWord=board?{seed:board.seed,found,paths:foundPaths,...(board.version===2?{version:2}:{})}:null,ownPuzzle=puzzle?{tiles:puzzle,moves}:null;
  wordStates={...asRecord(value.wordStates)};puzzleStates={...asRecord(value.puzzleStates)};
  const w=wordStates[wordKey()],p=puzzleStates[puzzleKey()];
  if(ownWord&&(!Number.isSafeInteger(w?.seed)||!Array.isArray(w?.found)))wordStates[wordKey()]=ownWord;
@@ -37,7 +37,7 @@ function adoptGames(value,external){
  return !!(changedWord||changedPuzzle);
 }
 function syncGames(){const changed=gameSession.sync();recoverySession.sync();return changed;}
-function save(){wordStates[wordKey()]={seed:board.seed,found,paths:foundPaths};puzzleStates[puzzleKey()]={tiles:puzzle,moves};return gameSession.write({theme:theme.id,difficulty,photo:photo.id,size,mode,wordStates,puzzleStates});}
+function save(){wordStates[wordKey()]={seed:board.seed,found,paths:foundPaths,...(board.version===2?{version:2}:{})};puzzleStates[puzzleKey()]={tiles:puzzle,moves};return gameSession.write({theme:theme.id,difficulty,photo:photo.id,size,mode,wordStates,puzzleStates});}
 window.addEventListener('storage',e=>{if(e.key===KEY)syncGames();if(e.key===RECOVERY_KEY)recoverySession.sync();});
 window.addEventListener('focus',syncGames);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGames();});
@@ -51,7 +51,7 @@ function revealLetter(button,center=false){
  const cover=getComputedStyle(wordListPanel).position==='sticky'?Math.max(0,wordListPanel.getBoundingClientRect().bottom):0;
  const top=button.getBoundingClientRect().top;if(top<cover+12)window.scrollBy({top:top-cover-12,behavior:'auto'});
 }
-function loadWords(reset=false){const saved=!reset&&wordStates[wordKey()];board=makeWordSearch(theme.words,{difficulty,seed:Number.isSafeInteger(saved?.seed)?saved.seed:Date.now()+Math.floor(Math.random()*100000)});found=Array.isArray(saved?.found)?[...new Set(saved.found.filter(t=>board.placements.some(p=>p.text===t)))]:[];foundPaths={};for(const text of found){const cells=saved?.paths?.[text];if(Array.isArray(cells)&&cells.every(i=>Number.isInteger(i)&&i>=0&&i<board.grid.length)){const hit=matchWord(board,cells[0],cells.at(-1));if(hit?.text===text&&JSON.stringify(hit.cells)===JSON.stringify(cells))foundPaths[text]=cells;}}wordFirst=null;hintCell=null;clearTimeout(hintTimer);renderWords();}
+function loadWords(reset=false){const saved=!reset&&wordStates[wordKey()];board=makeWordSearch(theme.words,{difficulty,seed:Number.isSafeInteger(saved?.seed)?saved.seed:Date.now()+Math.floor(Math.random()*100000),version:saved?(saved.version===2?2:1):2});found=Array.isArray(saved?.found)?[...new Set(saved.found.filter(t=>board.placements.some(p=>p.text===t)))]:[];foundPaths={};for(const text of found){const cells=saved?.paths?.[text];if(Array.isArray(cells)&&cells.every(i=>Number.isInteger(i)&&i>=0&&i<board.grid.length)){const hit=matchWord(board,cells[0],cells.at(-1));if(hit?.text===text&&JSON.stringify(hit.cells)===JSON.stringify(cells))foundPaths[text]=cells;}}wordFirst=null;hintCell=null;clearTimeout(hintTimer);renderWords();}
 function validTiles(tiles){return Array.isArray(tiles)&&tiles.length===size*size&&new Set(tiles).size===size*size&&tiles.every(v=>Number.isInteger(v)&&v>=0&&v<size*size);}
 function loadPuzzle(reset=false){const saved=!reset&&puzzleStates[puzzleKey()];puzzle=validTiles(saved?.tiles)?[...saved.tiles]:newPuzzle(size);moves=Number.isSafeInteger(saved?.moves)&&saved.moves>=0?saved.moves:0;selected=null;renderPuzzle();}
 function renderThemes(){const root=$('themes'),focused=root.contains(document.activeElement)?document.activeElement.dataset.theme:null;root.replaceChildren();themes.forEach(t=>{const b=document.createElement('button');b.className='theme-button'+(theme.id===t.id?' active':'');b.setAttribute('aria-pressed',String(theme.id===t.id));b.dataset.theme=t.id;b.innerHTML=icon(t.icon)+`<span>${t.short}<small>${t.words.length} ${t.unit||'palabras'}</small></span>`;b.addEventListener('click',()=>{syncGames();save();theme=t;loadWords();renderThemes();save();say('');});root.append(b);});if(focused)root.querySelector(`[data-theme="${focused}"]`)?.focus({preventScroll:true});}
@@ -60,13 +60,13 @@ function renderWords(){
   $('word-list-title').textContent=theme.unit==='títulos'?'Títulos a encontrar':'Palabras a encontrar';
   $('word-instruction').textContent=difficulty==='calma'?'Toca la primera y la última letra. Busca hacia la derecha y hacia abajo.':'Toca la primera y la última letra. También hay diagonales y palabras al revés.';
   document.querySelectorAll('[name="difficulty"]').forEach(r=>r.checked=r.value===difficulty);
-  const grid=$('word-grid');grid.replaceChildren();grid.setAttribute('aria-label',`${theme.title}. Tablero de ${board.rows} filas y ${board.cols} columnas.`);
+  const grid=$('word-grid');grid.replaceChildren();grid.style.setProperty('--word-cols',board.cols);grid.setAttribute('aria-label',`${theme.title}. Tablero de ${board.rows} filas y ${board.cols} columnas.`);
   board.grid.forEach((letter,i)=>{const b=document.createElement('button');b.className='letter';b.textContent=letter;b.dataset.index=i;b.tabIndex=i===0?0:-1;b.setAttribute('aria-label',`${letter}, fila ${Math.floor(i/board.cols)+1}, columna ${i%board.cols+1}`);b.addEventListener('click',()=>chooseLetter(i));grid.append(b);});paintWords();
 }
 function paintWords(){
   const colors=new Map();found.forEach((text,n)=>{const cells=foundPaths[text]||board.placements.find(p=>p.text===text)?.cells;cells?.forEach(c=>colors.set(c,n%4));});
   [...$('word-grid').children].forEach((b,i)=>{b.classList.toggle('found',colors.has(i));b.classList.toggle('picked',i===wordFirst);b.classList.toggle('hinted',i===hintCell);b.dataset.color=colors.get(i)??'';b.setAttribute('aria-pressed',String(i===wordFirst));b.setAttribute('aria-label',`${i===hintCell?'Pista: ':''}${board.grid[i]}, fila ${Math.floor(i/board.cols)+1}, columna ${i%board.cols+1}`);});
-  const list=$('word-list');list.replaceChildren();theme.words.forEach(label=>{const li=document.createElement('li');const done=found.includes(normalize(label));li.className=done?'done':'';const check=document.createElement('span');check.className='word-check';check.textContent='✓';check.setAttribute('aria-hidden','true');const name=document.createElement('span');name.className='word-name';name.textContent=label;li.append(check,name);if(done)li.setAttribute('aria-label',label+', encontrada');list.append(li);});
+  const list=$('word-list');list.replaceChildren();theme.words.forEach(label=>{const li=document.createElement('li');const done=found.includes(normalize(label));li.className=done?'done':'';const check=document.createElement('span');check.className='word-check';check.textContent='✓';check.setAttribute('aria-hidden','true');const name=document.createElement('span');name.className='word-name';const entry=board.placements.find(p=>p.text===normalize(label));name.textContent=entry?.search&&entry.search!==entry.text?`${label} · buscar ${entry.search}`:label;li.append(check,name);if(done)li.setAttribute('aria-label',label+', encontrada');list.append(li);});
   updateWordToggle();
   $('word-progress').textContent=`${found.length} de ${theme.words.length} encontradas`;
   $('word-win').hidden=found.length!==theme.words.length;$('word-hint').disabled=found.length===theme.words.length;
@@ -86,7 +86,7 @@ function chooseLetter(i){
 $('word-grid').addEventListener('keydown',e=>{const i=Number(e.target.dataset.index);if(!Number.isInteger(i))return;const offsets={ArrowUp:-board.cols,ArrowDown:board.cols,ArrowLeft:-1,ArrowRight:1};if(e.key==='Escape'){wordFirst=null;hintCell=null;paintWords();say('Selección cancelada.');return;}if(e.key in offsets){e.preventDefault();const next=Math.min(board.grid.length-1,Math.max(0,i+offsets[e.key]));e.target.tabIndex=-1;const target=$('word-grid').children[next];target.tabIndex=0;revealLetter(target);}});
 $('word-grid').addEventListener('focusin',e=>{if(e.target.classList.contains('letter')){[...$('word-grid').children].forEach(b=>b.tabIndex=b===e.target?0:-1);}});
 $('word-hint').addEventListener('click',()=>{if(syncGames())return;const next=board.placements.find(p=>!found.includes(p.text));if(!next)return;wordFirst=null;hintCell=next.cells[0];paintWords();revealLetter($('word-grid').children[hintCell],true);say(`Busca «${next.label}». Primera letra: fila ${Math.floor(hintCell/board.cols)+1}, columna ${hintCell%board.cols+1}, marcada en amarillo.`);clearTimeout(hintTimer);hintTimer=setTimeout(()=>{hintCell=null;paintWords();},12000);});
-function newWords(){if(syncGames())return;const previous=wordRecovery({seed:board.seed,found,paths:foundPaths},theme.words);if(previous){recoveries.words[wordKey()]=previous;saveRecoveries();}loadWords(true);save();say('Un tablero nuevo, cuando tú quieras.');revealLetter($('word-grid').firstElementChild);}
+function newWords(){if(syncGames())return;const previous=wordRecovery({seed:board.seed,found,paths:foundPaths,...(board.version===2?{version:2}:{})},theme.words);if(previous){recoveries.words[wordKey()]=previous;saveRecoveries();}loadWords(true);save();say('Un tablero nuevo, cuando tú quieras.');revealLetter($('word-grid').firstElementChild);}
 $('new-word').addEventListener('click',newWords);$('word-again').addEventListener('click',newWords);
 $('word-recover').addEventListener('click',()=>{
  if(syncGames())return;
