@@ -141,6 +141,7 @@ $('themes').addEventListener('click',event=>{if(event.target.closest('[data-them
 $('quiz-topics').addEventListener('click',event=>{if(event.target.closest('[data-quiz-topic]'))mobileGoTo($('quiz-title'));});
 function updateWordToggle(){const collapsed=wordListPanel.classList.contains('words-collapsed');$('word-list-toggle').setAttribute('aria-expanded',String(!collapsed));$('word-list-toggle').textContent=(collapsed?'Ver palabras':'Ocultar palabras')+` · ${found.length}/${theme.words.length}`;}
 $('word-list-toggle').addEventListener('click',()=>{wordListPanel.classList.toggle('words-collapsed');updateWordToggle();adaptWordList();});
+$('word-zoom').addEventListener('click',()=>{const active=$('word-grid').classList.toggle('word-grid-zoomed');$('word-zoom').setAttribute('aria-pressed',String(active));$('word-zoom').textContent=active?'Ver tablero completo':'Ampliar casillas';$('word-zoom-help').hidden=!active;});
 $('word-jump').addEventListener('click',()=>{wordListPanel.classList.add('words-collapsed');updateWordToggle();adaptWordList();mobileGoTo($('word-grid'));});
 $('tab-words').addEventListener('click',()=>switchMode('words'));$('tab-puzzle').addEventListener('click',()=>switchMode('puzzle'));
 $('tab-quiz').addEventListener('click',()=>switchMode('quiz'));

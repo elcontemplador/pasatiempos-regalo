@@ -1,4 +1,4 @@
-const VERSION='22',CACHE='regalo-omar-vc3a8cedea1cb';
+const VERSION='22',CACHE='regalo-omar-v7fb2a0f8b3ee';
 const CORE=['./state-session.js?v=37','./chess.js?v=36','./chess-engine.js?v=35','./chess-ai-worker.js?v=35','./chess-pieces.js?v=36','./chess.css?v=37','./vendor/chess.js?v=1.4.0','./domino-layout.js?v=33','./domino-drag.js?v=34','./domino.js?v=34','./domino-engine.js?v=31','./domino.css?v=37','./share.js?v=22','./recovery.js?v=28','./','./index.html','./style.css?v=37','./app.js?v=37','./engine.js?v=28','./engine.js','./quiz.js?v=37','./quiz-data.js?v=29','./quiz-engine.js?v=22','./storage.js?v=22','./offline.js?v=22','./icons.js?v=22','./letters.js?v=37','./letters-engine.js?v=22','./letters-data.js?v=22','./icon.svg','./manifest.webmanifest'];
 const PHOTOS=["./assets/photos/ruta-agua.jpg","./assets/photos/ruta-agua.thumb.jpg","./assets/photos/dos-todoterrenos.jpg","./assets/photos/dos-todoterrenos.thumb.jpg","./assets/photos/camino.jpg","./assets/photos/camino.thumb.jpg","./assets/photos/puente.jpg","./assets/photos/puente.thumb.jpg","./assets/header.jpg"];
 const ASSETS=[...PHOTOS];

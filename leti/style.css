@@ -119,3 +119,6 @@ dialog{max-height:90vh;max-height:90dvh}
 #puzzle-zoom-dialog .puzzle-zoom-heading{position:sticky;top:0;z-index:5;background:var(--paper);padding-bottom:6px}
 
 @media(max-width:680px),(max-width:960px) and (pointer:coarse){.sp-game .sp-toolbar select{font-size:max(16px,1rem)}}
+
+.board-zoom-help{font-size:.875rem;line-height:1.4;color:var(--muted);margin:0 0 8px}.word-grid-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}.board-zoom{margin-bottom:6px}
+@media(max-width:680px){.word-grid.word-grid-zoomed{width:470px;max-width:none;grid-template-columns:repeat(10,minmax(0,1fr));overflow:visible}.word-grid-zoomed .letter{font-size:1.2rem}}
