@@ -17,3 +17,6 @@
 .sp-game .sp-zoom-toggle{border:1px solid var(--line,#b8c8db);border-radius:8px;padding:8px 11px;background:var(--paper,#fff);color:var(--ink,#173653);font-weight:650}.sp-game .sp-zoom-toggle[aria-pressed="true"]{background:var(--blue,#244d94);color:#fff}
 
 @media(max-width:680px){.sp-game .sp-zoom-toggle{border-color:var(--blue,#244d94);background:var(--pale,#edf3fc);font-size:.9375rem;font-weight:700}}
+
+/* Orientación discreta y errores visibles únicamente al comprobar. */
+.sp-cell.sp-related{background:#edf3e9}.sp-cell.sp-same{background:#dbe9d5}.sp-cell.sp-error{background:#fde7e3;box-shadow:inset 0 0 0 2px #a42b20}.sp-cell.sp-error::after{content:"";position:absolute;top:3px;left:3px;width:6px;height:6px;border-radius:50%;background:#a42b20}.sp-cell.sp-selected{background:#fff2c5;box-shadow:inset 0 0 0 3px var(--accent,#315dc6)}
