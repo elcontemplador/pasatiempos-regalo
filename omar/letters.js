@@ -1,17 +1,18 @@
 import {createStateSession} from './state-session.js?v=37';
-import {letterWords} from './letters-data.js?v=22';
-import {lettersOf,makeLettersRound,validLettersRound,placeLetter,removeLetter,giveLetter,revealWord} from './letters-engine.js?v=22';
+import {letterWords,legacyLetterWords} from './letters-data.js?v=22';
+import {lettersOf,makeLettersRound,restoreLettersRound,placeLetter,removeLetter,giveLetter,revealWord} from './letters-engine.js?v=22';
 import {readState,saveState} from './storage.js?v=22';
 const KEY='regalo-omar-letters-v1';
 export function initLetters(){
  const $=id=>document.getElementById(id),saved=readState(KEY);let rounds={},seen={},ready=false;let level=saved.level==='reto'?'reto':'calma';
+ const allWords=[...letterWords,...legacyLetterWords];
  const bank=l=>letterWords.filter(w=>w.level===l);
- for(const l of ['calma','reto']){const words=bank(l);if(validLettersRound(saved.rounds?.[l],words))rounds[l]=saved.rounds[l];seen[l]=Array.isArray(saved.seen?.[l])?[...new Set(saved.seen[l].filter(id=>words.some(w=>w.id===id)))]:[];}
+ for(const l of ['calma','reto']){const words=bank(l);const restored=restoreLettersRound(saved.rounds?.[l],letterWords,legacyLetterWords,l);if(restored)rounds[l]=restored;seen[l]=Array.isArray(saved.seen?.[l])?[...new Set(saved.seen[l].filter(id=>words.some(w=>w.id===id)))]:[];}
  const session=createStateSession(KEY,['rounds','seen'],adopt);
  function adopt(value,external){
   const before=JSON.stringify(rounds[level]);
   for(const l of ['calma','reto']){
-   const words=bank(l);if(validLettersRound(value.rounds?.[l],words))rounds[l]=value.rounds[l];
+   const words=bank(l),restored=restoreLettersRound(value.rounds?.[l],letterWords,legacyLetterWords,l);if(restored)rounds[l]=restored;
    if(Array.isArray(value.seen?.[l]))seen[l]=[...new Set(value.seen[l].filter(id=>words.some(w=>w.id===id)))];
   }
   const changed=before!==JSON.stringify(rounds[level]);
@@ -26,7 +27,7 @@ export function initLetters(){
  function start(){const next=makeLettersRound(bank(level),seen[level],Math.random,rounds[level]?.cards.map(c=>c.id)||[]);rounds[level]=next.round;seen[level]=next.seen;save();}
  function ensure(){if(!rounds[level])start();}
  const current=()=>rounds[level].cards[rounds[level].index];
- const entry=()=>letterWords.find(w=>w.id===current()?.id);
+ const entry=()=>allWords.find(w=>w.id===current()?.id);
  function feedback(message){$('letters-feedback').textContent=message;}
  function focusPlay(){const target=current()?.status==='playing'?$('letters-pool').querySelector('button:not(:disabled)')||$('letters-slots').querySelector('button:not(:disabled)'):$('letters-next');target?.focus({preventScroll:true});target?.scrollIntoView({block:'nearest',inline:'nearest'});}
  function afterChange(message){save();render();if(current().status==='playing')feedback(message);focusPlay();}
@@ -34,6 +35,7 @@ export function initLetters(){
   const round=rounds[level],done=round.index===5;
   document.querySelectorAll('[name="letter-level"]').forEach(r=>r.checked=r.value===level);
   $('letters-level-note').textContent=level==='calma'?'De 6 a 8 letras, con una definición para empezar.':'De 9 a 13 letras. La definición aparece si pides una pista.';
+  if(round.cards.some(c=>legacyLetterWords.some(w=>w.id===c.id)))$('letters-level-note').textContent+=' Continúas una ronda anterior. Las siguientes tendrán palabras de tus aficiones.';
   $('letters-play').hidden=done;$('letters-result').hidden=!done;
   $('letters-progress').textContent=done?'Ronda terminada':`Palabra ${round.index+1} de 5`;
   $('letters-meter').value=round.cards.filter(c=>c.status!=='playing').length;feedback('');
@@ -41,7 +43,7 @@ export function initLetters(){
    const count=round.cards.filter(c=>c.status==='solved').length;
    $('letters-result-title').textContent=count===5?'¡Las cinco, Omar!':`${count} de 5 palabras resueltas`;
    $('letters-review').replaceChildren();
-   round.cards.forEach(c=>{const w=letterWords.find(w=>w.id===c.id),li=document.createElement('li'),name=document.createElement('strong'),detail=document.createElement('span');name.textContent=w.word;detail.textContent=c.status==='revealed'?'Solución consultada':c.given.length||level==='reto'&&c.clue?'Resuelta con ayuda':'Resuelta';li.append(name,detail);$('letters-review').append(li);});return;
+   round.cards.forEach(c=>{const w=allWords.find(w=>w.id===c.id),li=document.createElement('li'),name=document.createElement('strong'),detail=document.createElement('span');name.textContent=w.word;detail.textContent=c.status==='revealed'?'Solución consultada':c.given.length||level==='reto'&&c.clue?'Resuelta con ayuda':'Resuelta';li.append(name,detail);$('letters-review').append(li);});return;
   }
   const c=current(),w=entry(),text=lettersOf(w.word),finished=c.status!=='playing';
   $('letters-category').textContent=w.category;$('letters-length').textContent=`${text.length} letras`;

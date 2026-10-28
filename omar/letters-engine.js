@@ -46,3 +46,11 @@ export function giveLetter(card,entry){
  card.slots[position]=token;card.given.push(position);checkSolved(card,entry);return true;
 }
 export function revealWord(card,entry){if(card.status!=='playing')return;card.slots=Array.from(lettersOf(entry.word),(_,i)=>i);card.clue=true;card.status='revealed';}
+
+// Preserve any played historical round. Automatically replace only untouched deals.
+export function restoreLettersRound(round,active,legacy,level){
+ const available=[...active,...legacy].filter(w=>w.level===level);
+ if(!validLettersRound(round,available))return null;
+ const untouched=round.index===0&&round.cards.every(c=>legacy.some(w=>w.id===c.id)&&c.status==='playing'&&c.slots.every(t=>t===null)&&c.given.length===0&&c.clue===(level==='calma'));
+ return untouched?null:round;
+}

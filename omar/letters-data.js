@@ -701,3 +701,6 @@ export const letterWords=[
     "clue": "Recinto con instalaciones para practicar distintas disciplinas físicas."
   }
 ];
+
+// Historical bank is empty in the base; personalized builds retain it for saved rounds.
+export const legacyLetterWords=[];
