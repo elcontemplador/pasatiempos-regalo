@@ -1,4 +1,5 @@
 import {mountSpecialGame} from './special-games.js';
+import {mountCardGame} from './card-games.js';
 import {createStateSession} from './state-session.js?v=37';
 import {initChess} from './chess.js?v=36';
 import {initDomino} from './domino.js?v=34';
@@ -9,12 +10,13 @@ import {themes,photos,normalize,makeWordSearch,matchWord,newPuzzle,swapTiles,puz
 import {initQuiz} from './quiz.js?v=37';
 import {asRecord,readState,saveState} from './storage.js?v=22';
 import {initOffline} from './offline.js?v=22';
+const GAMES=['words','puzzle','quiz','letters','domino','chess','tute','mus'];
 const $=id=>document.getElementById(id),KEY='regalo-leti-v1';
 import {icon} from './icons.js?v=22';
 let stored=readState(KEY);
 const RECOVERY_KEY='regalo-leti-recovery-v1';let recoveries=cleanRecoveries(readState(RECOVERY_KEY),themes,photos);
 function saveRecoveries(){return recoverySession.write(recoveries);}
-let theme=themes.find(t=>t.id===stored.theme)||themes[0],difficulty=stored.difficulty==='reto'?'reto':'calma',photo=photos.find(p=>p.id===stored.photo)||photos[0],size=stored.size===4?4:3,mode=['puzzle','quiz','letters','domino','chess'].includes(stored.mode)?stored.mode:'words';
+let theme=themes.find(t=>t.id===stored.theme)||themes[0],difficulty=stored.difficulty==='reto'?'reto':'calma',photo=photos.find(p=>p.id===stored.photo)||photos[0],size=stored.size===4?4:3,mode=GAMES.includes(stored.mode)?stored.mode:'words';
 let board,found=[],foundPaths={},wordFirst=null,hintCell=null,hintTimer,puzzle,selected=null,moves=0;
 const dialogTriggers=new WeakMap();
 let wordStates=asRecord(stored.wordStates),puzzleStates=asRecord(stored.puzzleStates);
@@ -117,7 +119,7 @@ $('puzzle-recover').addEventListener('click',()=>{
  const focus=puzzleSolved(puzzle)?$('puzzle-win'):$('puzzle-board').firstElementChild;focus.focus({preventScroll:true});focus.scrollIntoView({block:'nearest'});
 });
 document.querySelectorAll('[name="pieces"]').forEach(r=>r.addEventListener('change',()=>{syncGames();save();size=Number(r.value);loadPuzzle();save();say('');}));
-function switchMode(next){syncGames();mode=next;['words','puzzle','quiz','letters','domino','chess'].forEach(m=>{$(m+'-view').hidden=m!==next;$('tab-'+m).classList.toggle('active',m===next);$('tab-'+m).setAttribute('aria-pressed',String(m===next));});domino.setActive(next==='domino');chess.setActive(next==='chess');say('');if(board&&puzzle)save();}
+function switchMode(next){syncGames();mode=next;GAMES.forEach(m=>{$(m+'-view').hidden=m!==next;$('tab-'+m).classList.toggle('active',m===next);$('tab-'+m).setAttribute('aria-pressed',String(m===next));});domino.setActive(next==='domino');chess.setActive(next==='chess');tute.setActive(next==='tute');mus.setActive(next==='mus');say('');if(board&&puzzle)save();}
 // En móvil, acercar la navegación al juego sin cambiar sus guardados.
 const mobileLayout=window.matchMedia('(max-width:680px), (max-width:960px) and (pointer:coarse)');
 const mobileNav=$('mobile-nav'),gameMenu=$('game-menu');
@@ -145,6 +147,7 @@ $('tab-quiz').addEventListener('click',()=>switchMode('quiz'));
 $('tab-domino').addEventListener('click',()=>switchMode('domino'));
 $('tab-chess').addEventListener('click',()=>switchMode('chess'));
 $('tab-letters').addEventListener('click',()=>switchMode('letters'));
+$('tab-tute').addEventListener('click',()=>switchMode('tute'));$('tab-mus').addEventListener('click',()=>switchMode('mus'));
 function openDialog(id,trigger){const d=$(id);dialogTriggers.set(d,trigger);d.showModal();}
 $('show-photo').addEventListener('click',e=>{$('reference-title').textContent=photo.title;$('reference-photo').src=photo.src;$('reference-photo').alt=photo.alt;openDialog('photo-dialog',e.currentTarget);});
 $('change-photo').addEventListener('click',e=>openDialog('gallery-dialog',e.currentTarget));
@@ -171,7 +174,7 @@ $('expand-puzzle').addEventListener('click',e=>{
 $('close-puzzle-zoom').addEventListener('click',()=>zoomDialog.close());
 zoomDialog.addEventListener('close',()=>{puzzleHome.append(puzzlePlay);$('expand-puzzle').hidden=false;});
 document.querySelectorAll('dialog').forEach(d=>{d.querySelectorAll('.dialog-close,.dialog-done').forEach(b=>b.addEventListener('click',()=>d.close()));d.addEventListener('close',()=>dialogTriggers.get(d)?.focus());d.addEventListener('click',e=>{if(e.target===d){const rect=d.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)d.close();}});});
-loadWords();loadPuzzle();renderThemes();renderPhotos();const quiz=initQuiz(),letters={...mountSpecialGame($('letters-view'),{person:'leti',storagePrefix:'regalo-leti'}),surprise:()=>"Cuatro en raya"},domino=initDomino(openDialog),chess=initChess(openDialog);switchMode(mode);updateMobileNav();
+loadWords();loadPuzzle();renderThemes();renderPhotos();const quiz=initQuiz(),letters={...mountSpecialGame($('letters-view'),{person:'leti',storagePrefix:'regalo-leti'}),surprise:()=>"Cuatro en raya"},domino=initDomino(openDialog),chess=initChess(openDialog),tute=mountCardGame($('tute-view'),{kind:'tute',storagePrefix:'regalo-leti-'}),mus=mountCardGame($('mus-view'),{kind:'mus',storagePrefix:'regalo-leti-'});switchMode(mode);updateMobileNav();
 initOffline();
 initSharing(openDialog);
 
@@ -182,13 +185,13 @@ applyTextSize();
 $('large-text').addEventListener('click',()=>{largeText=!largeText;applyTextSize();saveState(PREFS,{largeText});say(largeText?'Letra grande activada.':'Tamaño de letra habitual.');});
 const pick=items=>items[Math.floor(Math.random()*items.length)];
 $('surprise').addEventListener('click',()=>{
- syncGames();save();const next=pick(['words','puzzle','quiz','letters','domino','chess']);let title;
+ syncGames();save();const next=pick(GAMES);let title;
  if(next==='words'){
   const available=themes.filter(t=>t.id!==theme.id&&((wordStates[`${t.id}-${difficulty}`]?.found?.length||0)<t.words.length));
   const alternatives=themes.filter(t=>t.id!==theme.id);theme=pick(available.length?available:alternatives.length?alternatives:themes);loadWords();renderThemes();title=theme.title;
  }else if(next==='puzzle'){
   const available=photos.filter(p=>{const tiles=puzzleStates[`${p.id}-${size}`]?.tiles;return p.id!==photo.id&&(!validTiles(tiles)||!puzzleSolved(tiles));});
   const alternatives=photos.filter(p=>p.id!==photo.id);photo=pick(available.length?available:alternatives.length?alternatives:photos);loadPuzzle();renderPhotos();title=photo.title;
- }else if(next==='quiz')title=quiz.surprise();else if(next==='letters')title=letters.surprise();else title=next==='chess'?'Una partida de ajedrez':'Dominó por parejas';
- switchMode(next);updateMobileNav();const heading=$(next==='words'?'word-title':next==='puzzle'?'puzzle-title':next==='quiz'?'quiz-title':next==='letters'?'letters-title':next==='chess'?'chess-title':'domino-title');if(mobileLayout.matches)mobileGoTo(heading);else{heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'start'});}say(`Te propongo: ${title}. ¡A disfrutar!`);
+ }else if(next==='quiz')title=quiz.surprise();else if(next==='letters')title=letters.surprise();else title={chess:'Una partida de ajedrez',domino:'Dominó por parejas',tute:'Una partida de tute',mus:'Una partida de mus'}[next];
+ switchMode(next);updateMobileNav();const heading=$(next==='words'?'word-title':next==='puzzle'?'puzzle-title':next==='quiz'?'quiz-title':next==='letters'?'letters-title':next+'-title');if(mobileLayout.matches)mobileGoTo(heading);else{heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'start'});}say(`Te propongo: ${title}. ¡A disfrutar!`);
 });

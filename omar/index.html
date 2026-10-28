@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow"><meta name="apple-mobile-web-app-capable" content="yes">
   <title>Los pasatiempos de Omar</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./style.css?v=37"><link rel="stylesheet" href="./domino.css?v=37"><link rel="stylesheet" href="./chess.css?v=37"><link rel="stylesheet" href="./special-games.css"><link rel="stylesheet" href="./theme.css">
+  <link rel="stylesheet" href="./style.css?v=37"><link rel="stylesheet" href="./domino.css?v=37"><link rel="stylesheet" href="./chess.css?v=37"><link rel="stylesheet" href="./card-games.css"><link rel="stylesheet" href="./special-games.css"><link rel="stylesheet" href="./theme.css">
 </head>
 <body data-person="omar">
  <a class="skip-link" href="#main">Saltar al juego</a>
@@ -24,6 +24,8 @@
    <button id="tab-letters" class="game-tab" aria-pressed="false"><span class="tab-icon" aria-hidden="true">1–9</span><span>Sudoku<small>Un número en cada casilla</small></span></button>
    <button id="tab-domino" class="game-tab" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M6 12h12"/><circle cx="10" cy="7" r="1"/><circle cx="14" cy="17" r="1"/><circle cx="10" cy="15" r="1"/></svg><span>Dominó<small>Una mesa, cuatro jugadores</small></span></button>
    <button id="tab-chess" class="game-tab" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M10 2h4v4h4v4h-4v3h-4v-3H6V6h4zM6 13h12l-2 6H8zM5 22h14"/></svg><span>Ajedrez<small>Una partida sin prisa</small></span></button>
+   <button id="tab-tute" class="game-tab" aria-pressed="false"><span class="tab-icon" aria-hidden="true">R C</span><span>Tute<small>Triunfos, cantes y compañía</small></span></button>
+   <button id="tab-mus" class="game-tab" aria-pressed="false"><span class="tab-icon" aria-hidden="true">40</span><span>Mus<small>Una mano y un buen envite</small></span></button>
   </nav>
   <div class="comfort-tools" aria-label="A tu gusto"><button id="surprise" class="comfort-button"><span aria-hidden="true">✦</span> Sorpréndeme</button><button id="large-text" class="comfort-button" aria-pressed="false"><span aria-hidden="true">A+</span> Letra grande</button></div>
   <main id="main" tabindex="-1">
@@ -123,6 +125,8 @@
      </div>
     </div>
    </section>
+   <section id="tute-view" hidden aria-labelledby="tute-title"></section>
+   <section id="mus-view" hidden aria-labelledby="mus-title"></section>
    <p id="announcement" class="announcement" role="status" aria-live="polite" aria-atomic="true"></p>
   </main>
   <div class="app-status"><div id="update-notice" hidden><p role="status">Hay una versión nueva. Tus partidas se conservan.</p><button id="apply-update" class="comfort-button">Actualizar</button></div><p id="storage-status" role="status" hidden></p><p id="offline-status" role="status">Preparando el juego sin conexión…</p><button id="offline-retry" class="text-button" hidden>Reintentar descarga</button></div>
