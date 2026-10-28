@@ -51,3 +51,6 @@
 
 @media(max-width:680px){.cards-zoom-bar-actions{gap:3px}.cards-zoom-bar-actions button{font-size:.75rem;padding:6px}.cards-zoom-bar h2{white-space:nowrap}}
 @media(max-width:360px){.cards-title-prefix{display:none}}
+
+/* El resumen claro necesita texto oscuro también dentro del tapete. */
+.cards-arena .cards-round-result{color:var(--ink,#26332e)}

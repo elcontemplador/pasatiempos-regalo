@@ -25,7 +25,7 @@ export function mountCardGame(root,{kind,storagePrefix}){
  const session=createStateSession(key,['games'],(value,external)=>{if(!external)return false;const restored=engine.restore(value.games?.current);if(!restored)return false;state=restored;previous=engine.restore(value.games?.previous);selected.clear();clearTimeout(timer);render('La partida se ha actualizado desde otra pestaña.');schedule();return true;});
  function persist(){return session.write({games:{current:engine.serialize(state),previous:previous?engine.serialize(previous):null},pace});}
  function canBot(){return active&&!paused&&!modal&&!document.querySelector('dialog[open]:not(.cards-zoom-dialog)')&&!document.hidden&&state.winner===null&&Number.isInteger(state.turn)&&state.turn!==0;}
- function schedule(){clearTimeout(timer);timer=null;if(canBot()&&pace==='auto')timer=setTimeout(botTurn,950);}
+ function schedule(){clearTimeout(timer);timer=null;if(canBot()&&pace==='auto')timer=setTimeout(botTurn,1600);}
  function sync(){return session.sync();}
  function botTurn(){clearTimeout(timer);if(!canBot())return;if(sync()){schedule();return;}const action=engine.chooseAction(state);if(action)perform(action);}
  function perform(action){if(sync())return;const next=engine.applyAction(state,action);if(next===state)return;state=next;selected.clear();persist();render();schedule();}
