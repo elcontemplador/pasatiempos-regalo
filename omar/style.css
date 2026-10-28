@@ -94,3 +94,28 @@ dialog{max-height:90vh;max-height:90dvh}
 /* Acceso directo al juego para navegación con teclado. */
 .skip-link{position:fixed;top:8px;left:8px;z-index:10000;padding:12px 18px;background:var(--paper);color:var(--ink);border:2px solid currentColor;border-radius:6px;transform:translateY(-200%)}
 .skip-link:focus{transform:translateY(0)}
+
+/* Navegación y ayudas cerca del tablero en teléfonos. */
+.mobile-only,.mobile-nav{display:none}
+.inline-feedback{min-height:1.5em;margin:8px 0;font-size:.9375rem;line-height:1.5;color:var(--blue)}
+@media(max-width:680px),(max-width:960px) and (pointer:coarse){
+ html{scroll-padding-top:calc(var(--mobile-nav-height,0px) + 12px)}
+ .mobile-only{display:inline-flex}
+ .mobile-nav{display:flex;position:fixed;inset:0 0 auto;z-index:20;align-items:center;justify-content:space-between;gap:10px;padding:6px max(12px,env(safe-area-inset-right)) 6px max(12px,env(safe-area-inset-left));padding-top:max(6px,env(safe-area-inset-top));background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 3px 10px #0001}
+ #mobile-game-label{min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.875rem}
+ .mobile-nav button{flex-shrink:0;min-height:44px;font-size:.875rem;padding:8px 12px}
+ #word-jump{margin:0 0 18px;min-height:44px}
+ .word-list-panel{top:var(--mobile-nav-height,0px)}
+ #word-list-title{display:none}
+ #word-list-toggle{min-height:44px;align-items:center;justify-content:space-between;width:100%;font-size:.9375rem;padding:8px 4px;text-decoration:underline;text-underline-offset:3px}
+ .words-collapsed #word-list,.words-collapsed #word-normalization{display:none}
+ #word-grid{scroll-margin-top:66px}
+ .text-button,.hint-button,.segmented span{min-height:44px}
+ .segmented span{display:flex;align-items:center;justify-content:center}
+ select,input[type="text"]{font-size:16px}
+ footer{padding-bottom:max(24px,env(safe-area-inset-bottom))}
+}
+
+#puzzle-zoom-dialog .puzzle-zoom-heading{position:sticky;top:0;z-index:5;background:var(--paper);padding-bottom:6px}
+
+@media(max-width:680px),(max-width:960px) and (pointer:coarse){.sp-game .sp-toolbar select{font-size:max(16px,1rem)}}

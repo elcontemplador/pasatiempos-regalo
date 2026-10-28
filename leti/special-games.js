@@ -30,10 +30,10 @@ export function mountSpecialGame(root,{person,storagePrefix}={}){
  <p class="sp-status" role="status" aria-live="polite">${status||'Cada fila, columna y cuadrado contiene los números del 1 al 9.'}</p></div>`;
  }
  function renderConnect(){let turn=state.winner?`¡Ganan las ${label(state.winner)}!`:state.draw?'¡Empate! El tablero está completo.':`Turno de las ${label(state.turn)}${state.mode==='computer'&&state.turn===2?' (ordenador)':''}.`;
- root.innerHTML=`<div class="sp-game"><div class="sp-heading"><div><p class="sp-kicker">UN JUEGO PARA LETI</p><h2 id="letters-title">Cuatro en raya</h2><p>Elige una columna y consigue juntar cuatro fichas.</p></div><span class="sp-badge">PARA COMPARTIR</span></div>
+ root.innerHTML=`<div class="sp-game"><div class="sp-heading"><div><p class="sp-kicker">UN JUEGO PARA LETI</p><h2 id="letters-title">Cuatro en raya</h2><p>Toca una columna del tablero o su flecha para colocar una ficha.</p></div><span class="sp-badge">PARA COMPARTIR</span></div>
  <div class="sp-toolbar"><label>Modo <select data-action="mode"><option value="two" ${state.mode==='two'?'selected':''}>Dos personas</option><option value="computer" ${state.mode==='computer'?'selected':''}>Contra el ordenador</option></select></label><button type="button" data-action="new">Nueva partida</button><button type="button" data-action="recover" ${state.previous?'':'disabled'}>Recuperar anterior</button></div>
  <p class="sp-status" role="status" aria-live="polite">${status||turn}</p><div class="sp-column-controls" aria-label="Elige una columna">${Array.from({length:7},(_,i)=>`<button type="button" data-col="${i}" aria-label="Colocar ficha en la columna ${i+1}" ${state.board[i]||state.winner||state.draw?'disabled':''}>↓<span class="sp-sr-only"> Columna ${i+1}</span></button>`).join('')}</div>
- <div class="sp-connect" role="group" aria-label="Tablero de cuatro en raya. ${turn}">${state.board.map((v,i)=>`<div class="sp-hole sp-hole-${v}" role="img" aria-label="Fila ${Math.floor(i/7)+1}, columna ${i%7+1}: ${v?label(v):'vacía'}" title="Fila ${Math.floor(i/7)+1}, columna ${i%7+1}: ${v?label(v):'vacía'}">${v===1?'<span>●</span>':v===2?'<span>✦</span>':''}</div>`).join('')}</div>
+ <div class="sp-connect" role="group" aria-label="Tablero de cuatro en raya. ${turn}">${state.board.map((v,i)=>`<div class="sp-hole sp-hole-${v}" data-play-col="${i%7}" role="img" aria-label="Fila ${Math.floor(i/7)+1}, columna ${i%7+1}: ${v?label(v):'vacía'}" title="Fila ${Math.floor(i/7)+1}, columna ${i%7+1}: ${v?label(v):'vacía'}">${v===1?'<span>●</span>':v===2?'<span>✦</span>':''}</div>`).join('')}</div>
  <p class="sp-caption">${state.mode==='two'?'Rojas y amarillas juegan en el mismo dispositivo.':'Tú juegas con las rojas; el ordenador, con las amarillas.'}</p></div>`;
  }
  function render(){const a=document.activeElement,inside=root.contains(a),d=inside?a.dataset:{};const selector=d.cell!==undefined?`[data-cell="${d.cell}"]`:d.number!==undefined?`[data-number="${d.number}"]`:d.col!==undefined?`[data-col="${d.col}"]`:d.action?`[data-action="${d.action}"]`:null;if(person==='omar')renderSudoku();else renderConnect();if(inside){let focus=selector&&root.querySelector(selector);if(!focus||focus.disabled)focus=person==='omar'?root.querySelector(`[data-cell="${selected}"]`):root.querySelector('[data-action="new"]');focus?.focus({preventScroll:true});}}
@@ -44,10 +44,11 @@ export function mountSpecialGame(root,{person,storagePrefix}={}){
    else{state.board[selected]=value;state.notes[selected]=[];}
    status=state.board.every((v,i)=>v===state.solution[i])?'¡Sudoku completado!':value?'Número colocado.':'Casilla borrada.';save();render();
  }
- root.addEventListener('click',event=>{const b=event.target.closest('button');if(!b||!root.contains(b))return;b.focus({preventScroll:true});
+ function playColumn(column){const old=state;state=connectFourPlay(state,column);if(state===old)return;if(state.mode==='computer'&&!state.winner&&!state.draw)state=connectFourComputer(state);status='';save();render();}
+ root.addEventListener('click',event=>{const hole=event.target.closest('[data-play-col]');if(person==='leti'&&hole&&root.contains(hole)){playColumn(Number(hole.dataset.playCol));return;}const b=event.target.closest('button');if(!b||!root.contains(b))return;b.focus({preventScroll:true});
   if(b.dataset.cell!==undefined){selected=Number(b.dataset.cell);status='';render();root.querySelector(`[data-cell="${selected}"]`)?.focus();return;}
   if(b.dataset.number){changeValue(Number(b.dataset.number));return;}
-  if(b.dataset.col!==undefined){const old=state;state=connectFourPlay(state,Number(b.dataset.col));if(state===old)return;if(state.mode==='computer'&&!state.winner&&!state.draw)state=connectFourComputer(state);status='';save();render();return;}
+  if(b.dataset.col!==undefined){playColumn(Number(b.dataset.col));return;}
   switch(b.dataset.action){
    case 'new': {const old=clone(state);old.previous=null;state=person==='omar'?newSudoku(state.level):connectFourNew(state.mode);state.previous=old;status='Nueva partida preparada.';break;}
    case 'recover': {if(!valid(state.previous)){state.previous=null;status='No hay una partida anterior recuperable.';break;}const old=clone(state);old.previous=null;state=state.previous;state.previous=old;status='Partida anterior recuperada.';break;}

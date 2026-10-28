@@ -18,7 +18,9 @@ export function initChess(openDialog){
   const available=zoom.clientHeight-(frame.top-zr.top+zoom.scrollTop)-$('chess-files').offsetHeight-you.height-18-reserve;
   const ranks=$('chess-ranks').getBoundingClientRect().width+2;
   const largeText=parseFloat(getComputedStyle(document.documentElement).fontSize)>20;
-  const width=largeText?680:Math.max(244,Math.min(680,available+ranks));
+  // On portrait phones enlargement uses the available width, even when controls need scrolling.
+  const portraitPhone=zoom.clientWidth<=680&&zoom.clientHeight>zoom.clientWidth;
+  const width=largeText||portraitPhone?680:Math.max(244,Math.min(680,available+ranks));
   if(Math.abs(parseFloat(play.style.getPropertyValue('--chess-fit-width'))-width)>1||!play.style.getPropertyValue('--chess-fit-width'))play.style.setProperty('--chess-fit-width',width+'px');
  }
  const queueFit=()=>requestAnimationFrame(fitBoard);
@@ -74,6 +76,7 @@ export function initChess(openDialog){
  function render(){
   const hadBoardFocus=board.contains(document.activeElement);cancelDrag();const history=game.history({verbose:true}),last=history.at(-1),end=outcome(game,match.ending);
   const files=flipped?'hgfedcba':'abcdefgh',ranks=flipped?'12345678':'87654321';
+  const draggableSquares=new Set(!paused&&human()?game.moves({verbose:true}).map(move=>move.from):[]);
   const legal=selected&&!paused&&human()?game.moves({square:selected,verbose:true}):[],targets=new Set(legal.map(m=>m.to)),captures=new Set(legal.filter(m=>m.captured).map(m=>m.to));
   board.replaceChildren(...Array.from({length:64},(_,i)=>{
    const square=files[i%8]+ranks[Math.floor(i/8)],p=game.get(square);
@@ -81,6 +84,7 @@ export function initChess(openDialog){
    const dark=(square.charCodeAt(0)-97+Number(square[1]))%2===1;
    b.className='chess-square '+(dark?'dark':'light')+(selected===square?' selected':'')+(targets.has(square)?captures.has(square)?' capture-target':' legal-target':'')+(last&&(last.from===square||last.to===square)?' last-move'+(last.to===square?' last-destination':' last-origin'):'')+(p?.type==='k'&&p.color===game.turn()&&game.isCheck()?' in-check':'');
    b.tabIndex=square===focusSquare?0:-1;b.setAttribute('aria-pressed',String(selected===square));b.setAttribute('aria-label',squareName(square)+(p?', '+PIECE_NAMES[p.type]+' '+(p.color==='w'?(['q','r'].includes(p.type)?'blanca':'blanco'):(['q','r'].includes(p.type)?'negra':'negro')):', vacía')+(targets.has(square)?captures.has(square)?', captura posible':', destino posible':''));
+   b.classList.toggle('draggable-piece',draggableSquares.has(square));
    if(p)b.innerHTML=pieceSvg(p.type,p.color);
    b.addEventListener('click',e=>{if(suppressClick)return;focusSquare=square;choose(square,e.detail===0);});return b;
   }));

@@ -10,13 +10,14 @@
 </head>
 <body data-person="omar">
  <a class="skip-link" href="#main">Saltar al juego</a>
+ <div id="mobile-nav" class="mobile-nav" hidden><span id="mobile-game-label"></span><button id="mobile-games" class="comfort-button">Cambiar juego ↑</button></div>
  <div class="birthday-stripe"></div>
  <div class="shell">
   <header class="masthead">
    <div class="identity"><span class="portrait portrait-photo" aria-hidden="true"><img src="./assets/header.jpg" alt="" width="512" height="512"></span><div><p class="eyebrow">UN REGALO PARA TI</p><h1>Los pasatiempos<br>de <span>Omar</span></h1></div></div>
    <div class="birthday-note"><p>Rutas, motores y buenos ratos<br>Un regalo para ti.</p></div>
   </header>
-  <nav class="game-tabs" aria-label="Elige un juego">
+  <nav id="game-menu" tabindex="-1" class="game-tabs" aria-label="Elige un juego">
    <button id="tab-words" class="game-tab active" aria-pressed="true"><span class="tab-icon" aria-hidden="true">Aa</span><span>Sopas de letras<small>Palabras que te acompañan</small></span></button>
    <button id="tab-puzzle" class="game-tab" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 3v6h3v3h-3v9M3 12h5v3h4m0-3h9"/></svg><span>Puzles con tus fotos<small>Una pieza, un recuerdo</small></span></button>
    <button id="tab-quiz" class="game-tab" aria-pressed="false"><span class="tab-icon" aria-hidden="true">?</span><span>Trivial<small>Diez preguntas para disfrutar</small></span></button>
@@ -28,14 +29,14 @@
   <main id="main" tabindex="-1">
    <section id="words-view" aria-labelledby="word-title">
     <div class="words-layout">
-     <aside class="theme-side"><h2 class="section-label">¿Qué te apetece buscar?</h2><div id="themes" class="theme-list"></div><p class="side-note">Cada tablero es diferente.<br>El buen rato lo pones tú.</p></aside>
+     <aside class="theme-side"><h2 class="section-label">¿Qué te apetece buscar?</h2><div id="themes" class="theme-list"></div><button id="word-jump" class="comfort-button mobile-only">Ir al tablero ↓</button><p class="side-note">Cada tablero es diferente.<br>El buen rato lo pones tú.</p></aside>
      <div class="play-area">
       <div class="play-heading"><div><h2 id="word-title"></h2><p id="word-description"></p></div><span class="game-tag">SOPA DE LETRAS</span></div>
       <div class="game-toolbar"><fieldset class="segmented"><legend class="sr-only">Dificultad de la sopa</legend><label><input type="radio" name="difficulty" value="calma" checked><span>Con calma</span></label><label><input type="radio" name="difficulty" value="reto"><span>Un reto</span></label></fieldset><button class="text-button" id="new-word">↻ Otro tablero</button></div>
       <div id="word-recovery-tools" class="recovery-tools" hidden><button id="word-recover" class="text-button recovery-button">↶ Recuperar tablero anterior</button></div>
       <p class="instruction" id="word-instruction">Toca la primera y la última letra de una palabra.</p>
-      <div class="board-and-list"><div class="board-panel"><div id="word-grid" class="word-grid" role="group" aria-label="Tablero de sopa de letras"></div><div class="board-bottom"><span id="word-progress"></span><button class="hint-button" id="word-hint">Dame una pista</button></div></div>
-       <div class="word-list-panel"><h3 id="word-list-title">Palabras a encontrar</h3><ul id="word-list" class="word-list"></ul><p class="small-note">Sin espacios ni tildes en el tablero. La Ñ conserva su sitio.</p></div>
+      <div class="board-and-list"><div class="board-panel"><div id="word-grid" class="word-grid" role="group" aria-label="Tablero de sopa de letras"></div><p id="word-feedback" class="inline-feedback" aria-hidden="true"></p><div class="board-bottom"><span id="word-progress"></span><button class="hint-button" id="word-hint">Dame una pista</button></div></div>
+       <div class="word-list-panel"><h3 id="word-list-title">Palabras a encontrar</h3><button id="word-list-toggle" class="text-button mobile-only" aria-expanded="true" aria-controls="word-list word-normalization">Ocultar palabras</button><ul id="word-list" class="word-list"></ul><p id="word-normalization" class="small-note">Sin espacios ni tildes en el tablero. La Ñ conserva su sitio.</p></div>
       </div>
       <div id="word-win" tabindex="-1" class="win-message" hidden><strong>¡Todas encontradas, Omar!</strong><span>Otra sopa cuando te apetezca.</span><button class="primary-button" id="word-again">Jugar otra vez</button></div>
      </div>
@@ -48,7 +49,7 @@
       <div id="puzzle-recovery-tools" class="recovery-tools" hidden><button id="puzzle-recover" class="text-button recovery-button">↶ Recuperar puzle anterior</button></div>
       <p class="instruction">Toca dos piezas para intercambiarlas.</p>
       <div class="puzzle-surface"><div id="puzzle-board" class="puzzle-board" role="group" aria-label="Piezas de la fotografía"></div></div>
-      <div class="puzzle-bottom"><span id="puzzle-progress"></span><button class="hint-button" id="show-photo">Ver la foto</button></div>
+      <p id="puzzle-feedback" class="inline-feedback" aria-hidden="true"></p><div class="puzzle-bottom"><span id="puzzle-progress"></span><button class="hint-button" id="show-photo">Ver la foto</button></div>
       <div id="puzzle-win" tabindex="-1" class="win-message" hidden><strong>¡La foto está completa!</strong><span>Un recuerdo, pieza a pieza.</span><button class="primary-button" id="puzzle-again">Volver a jugar</button></div>
      </div></div>
    </section>

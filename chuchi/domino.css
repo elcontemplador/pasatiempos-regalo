@@ -164,3 +164,21 @@
 #domino-zoom-dialog .domino-guide-tip,#domino-zoom-dialog .domino-table-hint{display:none}
 .domino-options label.domino-sound-option{display:flex;align-items:center;gap:12px;min-height:48px;padding:12px;border:1px solid var(--line);border-radius:8px}
 .domino-sound-option input{flex-shrink:0;width:22px;height:22px}
+
+/* Keep the table and the hand together when a phone is turned sideways. */
+@media(orientation:landscape) and (min-width:700px) and (max-height:540px){
+ #domino-zoom-dialog .domino-play{--hand-unit:2.4rem;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px}
+ #domino-zoom-dialog .domino-topbar{grid-column:1;grid-row:1;grid-template-columns:minmax(0,1fr);gap:2px}
+ #domino-zoom-dialog .domino-round{text-align:left}
+ #domino-zoom-dialog .game-toolbar{grid-column:2;grid-row:1;align-self:center}
+ #domino-zoom-dialog .domino-body{grid-column:1/-1;grid-row:2;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ #domino-zoom-dialog .domino-view-tools{grid-column:1/-1;grid-row:3}
+ #domino-zoom-dialog .domino-guide-tip,#domino-zoom-dialog .domino-result{grid-column:1/-1}
+ #domino-zoom-dialog .domino-table{grid-template-areas:"west north east" "arena arena arena" ". south .";grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:6px}
+ #domino-zoom-dialog .domino-arena{height:9rem}
+ #domino-zoom-dialog .domino-seat{padding:4px 3px}
+ #domino-zoom-dialog #domino-seat-2{flex-direction:column;gap:3px;min-height:0}
+ #domino-zoom-dialog #domino-seat-0{grid-column:1/-1;min-height:30px;padding:4px;gap:3px 8px}
+ #domino-zoom-dialog .seat-last .domino-face{display:none}
+ #domino-zoom-dialog .domino-hand{gap:4px}
+}

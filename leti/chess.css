@@ -6,8 +6,9 @@
 .chess-frame{display:grid;grid-template-columns:22px minmax(0,1fr);grid-template-rows:auto 23px;gap:2px}
 .chess-ranks{display:grid;grid-template-rows:repeat(8,1fr);align-items:center;text-align:center;font-size:.875rem;color:var(--muted)}
 .chess-files{grid-column:2;display:grid;grid-template-columns:repeat(8,1fr);align-items:center;text-align:center;font-size:.875rem;color:var(--muted)}
-.chess-board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));aspect-ratio:1;border:3px solid #586653;border-radius:4px;overflow:hidden;box-shadow:0 5px 18px #17365314;user-select:none;-webkit-user-select:none;touch-action:none}
-.chess-square{position:relative;display:flex;align-items:center;justify-content:center;border:0;border-radius:0;margin:0;padding:0;min-width:0;min-height:0;aspect-ratio:1;-webkit-appearance:none;appearance:none;color:var(--ink);overflow:hidden;touch-action:none}
+.chess-board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));aspect-ratio:1;border:3px solid #586653;border-radius:4px;overflow:hidden;box-shadow:0 5px 18px #17365314;user-select:none;-webkit-user-select:none;touch-action:pan-y pinch-zoom}
+.chess-square{position:relative;display:flex;align-items:center;justify-content:center;border:0;border-radius:0;margin:0;padding:0;min-width:0;min-height:0;aspect-ratio:1;-webkit-appearance:none;appearance:none;color:var(--ink);overflow:hidden;touch-action:pan-y pinch-zoom}
+.chess-square.draggable-piece{touch-action:none}
 .chess-square.light{background:#eee9d8}.chess-square.dark{background:#91a68b}
 .chess-square.last-move.light{background:#f2df9b}.chess-square.last-move.dark{background:#c5ba72}
 .chess-square.selected{box-shadow:inset 0 0 0 4px #245599;background:#b5cfde}
@@ -46,8 +47,8 @@
 .chess-history-list{padding-left:24px;font-size:1rem;line-height:1.6;margin:18px 0}
 .chess-history-list li{margin:8px 0;padding-left:4px}
 #chess-drag-ghost{position:fixed;z-index:20000;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 5px 5px #172f5140)}#chess-drag-ghost .chess-piece{width:100%;height:100%}
-#chess-zoom-dialog{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;padding:10px;padding-top:max(10px,env(safe-area-inset-top));padding-bottom:max(10px,env(safe-area-inset-bottom));overscroll-behavior:contain}
-.chess-zoom-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1060px;margin:auto}
+#chess-zoom-dialog{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100%;max-height:none;border-radius:0;padding:10px;padding-top:max(10px,env(safe-area-inset-top));padding-right:max(10px,env(safe-area-inset-right));padding-bottom:max(10px,env(safe-area-inset-bottom));padding-left:max(10px,env(safe-area-inset-left));overscroll-behavior:contain}
+.chess-zoom-heading{position:sticky;top:0;z-index:5;background:white;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1060px;margin:auto}
 #chess-zoom-title{font-family:Georgia,serif;font-size:1.25rem;margin:0;line-height:1.3}
 #chess-zoom-dialog #chess-play{border:0;box-shadow:none;border-radius:0;padding:0}
 #chess-zoom-dialog .play-heading{display:none}
@@ -68,7 +69,7 @@
  .chess-frame{grid-template-columns:18px minmax(0,1fr)}
  .chess-board{border-width:2px}
  .chess-player{padding:5px 8px;gap:7px}
- #chess-zoom-dialog{padding-left:6px;padding-right:6px}
+ #chess-zoom-dialog{padding-left:max(6px,env(safe-area-inset-left));padding-right:max(6px,env(safe-area-inset-right))}
  #chess-zoom-dialog .chess-table{max-width:none}
  #chess-zoom-dialog .chess-companion{padding:10px}
  #chess-zoom-dialog .chess-last-moves{display:none}

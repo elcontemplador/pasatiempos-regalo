@@ -37,7 +37,7 @@ function save(){wordStates[wordKey()]={seed:board.seed,found,paths:foundPaths};p
 window.addEventListener('storage',e=>{if(e.key===KEY)syncGames();if(e.key===RECOVERY_KEY)recoverySession.sync();});
 window.addEventListener('focus',syncGames);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGames();});
-function say(text){$('announcement').textContent=text;$('puzzle-zoom-announcement').textContent=$('puzzle-zoom-dialog').open?text:'';}
+function say(text){$('announcement').classList.toggle('sr-only',mode==='words'||mode==='puzzle');$('announcement').textContent=text;$('word-feedback').textContent=mode==='words'?text:'';$('puzzle-feedback').textContent=mode==='puzzle'?text:'';$('puzzle-zoom-announcement').textContent=$('puzzle-zoom-dialog').open?text:'';}
 const wordListPanel=document.querySelector('.word-list-panel');
 function adaptWordList(){wordListPanel.classList.toggle('not-sticky',wordListPanel.getBoundingClientRect().height>innerHeight*.32);}
 if('ResizeObserver'in window)new ResizeObserver(adaptWordList).observe(wordListPanel);
@@ -63,6 +63,7 @@ function paintWords(){
   const colors=new Map();found.forEach((text,n)=>{const cells=foundPaths[text]||board.placements.find(p=>p.text===text)?.cells;cells?.forEach(c=>colors.set(c,n%4));});
   [...$('word-grid').children].forEach((b,i)=>{b.classList.toggle('found',colors.has(i));b.classList.toggle('picked',i===wordFirst);b.classList.toggle('hinted',i===hintCell);b.dataset.color=colors.get(i)??'';b.setAttribute('aria-pressed',String(i===wordFirst));b.setAttribute('aria-label',`${i===hintCell?'Pista: ':''}${board.grid[i]}, fila ${Math.floor(i/board.cols)+1}, columna ${i%board.cols+1}`);});
   const list=$('word-list');list.replaceChildren();theme.words.forEach(label=>{const li=document.createElement('li');const done=found.includes(normalize(label));li.className=done?'done':'';const check=document.createElement('span');check.className='word-check';check.textContent='✓';check.setAttribute('aria-hidden','true');const name=document.createElement('span');name.className='word-name';name.textContent=label;li.append(check,name);if(done)li.setAttribute('aria-label',label+', encontrada');list.append(li);});
+  updateWordToggle();
   $('word-progress').textContent=`${found.length} de ${theme.words.length} encontradas`;
   $('word-win').hidden=found.length!==theme.words.length;$('word-hint').disabled=found.length===theme.words.length;
   $('word-recovery-tools').hidden=!recoveries.words[wordKey()];
@@ -116,6 +117,28 @@ $('puzzle-recover').addEventListener('click',()=>{
 });
 document.querySelectorAll('[name="pieces"]').forEach(r=>r.addEventListener('change',()=>{syncGames();save();size=Number(r.value);loadPuzzle();save();say('');}));
 function switchMode(next){syncGames();mode=next;['words','puzzle','quiz','letters','domino','chess'].forEach(m=>{$(m+'-view').hidden=m!==next;$('tab-'+m).classList.toggle('active',m===next);$('tab-'+m).setAttribute('aria-pressed',String(m===next));});domino.setActive(next==='domino');chess.setActive(next==='chess');say('');if(board&&puzzle)save();}
+// En móvil, acercar la navegación al juego sin cambiar sus guardados.
+const mobileLayout=window.matchMedia('(max-width:680px), (max-width:960px) and (pointer:coarse)');
+const mobileNav=$('mobile-nav'),gameMenu=$('game-menu');
+function showMobileNav(show){
+ mobileNav.hidden=!show;
+ document.documentElement.style.setProperty('--mobile-nav-height',show?mobileNav.getBoundingClientRect().height+'px':'0px');
+}
+function updateMobileNav(){
+ $('mobile-game-label').textContent=$('tab-'+mode).lastElementChild.firstChild.textContent.trim();
+ showMobileNav(mobileLayout.matches&&gameMenu.getBoundingClientRect().bottom<=0);
+}
+let mobileNavQueued=false;
+function queueMobileNav(){if(mobileNavQueued)return;mobileNavQueued=true;requestAnimationFrame(()=>{mobileNavQueued=false;updateMobileNav();});}
+window.addEventListener('scroll',queueMobileNav,{passive:true});window.addEventListener('resize',queueMobileNav);
+function mobileGoTo(el){if(!mobileLayout.matches)return;showMobileNav(true);el.tabIndex=-1;el.focus({preventScroll:true});el.scrollIntoView({block:'start',behavior:'auto'});queueMobileNav();}
+$('mobile-games').addEventListener('click',()=>{gameMenu.focus({preventScroll:true});gameMenu.scrollIntoView({block:'start',behavior:'auto'});queueMobileNav();});
+gameMenu.addEventListener('click',event=>{if(event.target.closest('.game-tab')){updateMobileNav();mobileGoTo($('main'));}});
+$('themes').addEventListener('click',event=>{if(event.target.closest('[data-theme]'))mobileGoTo($('word-title'));});
+$('quiz-topics').addEventListener('click',event=>{if(event.target.closest('[data-quiz-topic]'))mobileGoTo($('quiz-title'));});
+function updateWordToggle(){const collapsed=wordListPanel.classList.contains('words-collapsed');$('word-list-toggle').setAttribute('aria-expanded',String(!collapsed));$('word-list-toggle').textContent=(collapsed?'Ver palabras':'Ocultar palabras')+` · ${found.length}/${theme.words.length}`;}
+$('word-list-toggle').addEventListener('click',()=>{wordListPanel.classList.toggle('words-collapsed');updateWordToggle();adaptWordList();});
+$('word-jump').addEventListener('click',()=>{wordListPanel.classList.add('words-collapsed');updateWordToggle();adaptWordList();mobileGoTo($('word-grid'));});
 $('tab-words').addEventListener('click',()=>switchMode('words'));$('tab-puzzle').addEventListener('click',()=>switchMode('puzzle'));
 $('tab-quiz').addEventListener('click',()=>switchMode('quiz'));
 $('tab-domino').addEventListener('click',()=>switchMode('domino'));
@@ -132,14 +155,14 @@ function fitPuzzle(){
  if(!zoomDialog.open)return;
  const surface=$('puzzle-board').parentElement,z=zoomDialog.getBoundingClientRect(),r=surface.getBoundingClientRect();
  const top=r.top-z.top+zoomDialog.scrollTop;
- const remaining=zoomDialog.clientHeight-top-document.querySelector('.puzzle-bottom').getBoundingClientRect().height-26;
+ const remaining=zoomDialog.clientHeight-top-document.querySelector('.puzzle-bottom').getBoundingClientRect().height-$('puzzle-feedback').getBoundingClientRect().height-42;
  const large=parseFloat(getComputedStyle(document.documentElement).fontSize)>20;
  const width=large?1100:Math.max(300,Math.min(1100,remaining*photo.width/photo.height));
  if(Math.abs(parseFloat(puzzlePlay.style.getPropertyValue('--puzzle-fit-width'))-width)>1||!puzzlePlay.style.getPropertyValue('--puzzle-fit-width'))puzzlePlay.style.setProperty('--puzzle-fit-width',width+'px');
 }
 function queuePuzzleFit(){if(puzzleFitQueued)return;puzzleFitQueued=true;requestAnimationFrame(()=>{puzzleFitQueued=false;fitPuzzle();});}
 window.addEventListener('resize',queuePuzzleFit);
-if(window.ResizeObserver){const observer=new ResizeObserver(queuePuzzleFit);for(const el of [zoomDialog,zoomDialog.querySelector('.puzzle-zoom-heading'),puzzlePlay.querySelector('.game-toolbar'),document.querySelector('.puzzle-bottom')])observer.observe(el);}
+if(window.ResizeObserver){const observer=new ResizeObserver(queuePuzzleFit);for(const el of [zoomDialog,zoomDialog.querySelector('.puzzle-zoom-heading'),puzzlePlay.querySelector('.game-toolbar'),document.querySelector('.puzzle-bottom'),$('puzzle-feedback')])observer.observe(el);}
 $('expand-puzzle').addEventListener('click',e=>{
  $('puzzle-zoom-title').textContent=photo.title;zoomDialog.append(puzzlePlay);e.currentTarget.hidden=true;
  openDialog('puzzle-zoom-dialog',e.currentTarget);$('close-puzzle-zoom').focus();zoomDialog.scrollTop=0;queuePuzzleFit();
@@ -147,7 +170,7 @@ $('expand-puzzle').addEventListener('click',e=>{
 $('close-puzzle-zoom').addEventListener('click',()=>zoomDialog.close());
 zoomDialog.addEventListener('close',()=>{puzzleHome.append(puzzlePlay);$('expand-puzzle').hidden=false;});
 document.querySelectorAll('dialog').forEach(d=>{d.querySelectorAll('.dialog-close,.dialog-done').forEach(b=>b.addEventListener('click',()=>d.close()));d.addEventListener('close',()=>dialogTriggers.get(d)?.focus());d.addEventListener('click',e=>{if(e.target===d){const rect=d.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)d.close();}});});
-loadWords();loadPuzzle();renderThemes();renderPhotos();const quiz=initQuiz(),letters=initLetters(),domino=initDomino(openDialog),chess=initChess(openDialog);switchMode(mode);
+loadWords();loadPuzzle();renderThemes();renderPhotos();const quiz=initQuiz(),letters=initLetters(),domino=initDomino(openDialog),chess=initChess(openDialog);switchMode(mode);updateMobileNav();
 initOffline();
 initSharing(openDialog);
 
@@ -166,5 +189,5 @@ $('surprise').addEventListener('click',()=>{
   const available=photos.filter(p=>{const tiles=puzzleStates[`${p.id}-${size}`]?.tiles;return p.id!==photo.id&&(!validTiles(tiles)||!puzzleSolved(tiles));});
   const alternatives=photos.filter(p=>p.id!==photo.id);photo=pick(available.length?available:alternatives.length?alternatives:photos);loadPuzzle();renderPhotos();title=photo.title;
  }else if(next==='quiz')title=quiz.surprise();else if(next==='letters')title=letters.surprise();else title=next==='chess'?'Una partida de ajedrez':'Dominó por parejas';
- switchMode(next);const heading=$(next==='words'?'word-title':next==='puzzle'?'puzzle-title':next==='quiz'?'quiz-title':next==='letters'?'letters-title':next==='chess'?'chess-title':'domino-title');heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'start'});say(`Te propongo: ${title}. ¡A disfrutar!`);
+ switchMode(next);updateMobileNav();const heading=$(next==='words'?'word-title':next==='puzzle'?'puzzle-title':next==='quiz'?'quiz-title':next==='letters'?'letters-title':next==='chess'?'chess-title':'domino-title');if(mobileLayout.matches)mobileGoTo(heading);else{heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'start'});}say(`Te propongo: ${title}. ¡A disfrutar!`);
 });
