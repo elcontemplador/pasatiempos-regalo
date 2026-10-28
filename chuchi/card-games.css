@@ -21,3 +21,8 @@
 @media(max-width:360px){.cards-table{padding:10px 5px}.card-corner{left:5px}.card-suit{font-size:.52rem;letter-spacing:.03em}}
 @media(prefers-reduced-motion:reduce){.spanish-card{transition:none}}
 #mus-view .cards-hand button:disabled{opacity:1;filter:none;background:linear-gradient(145deg,#fffef9,#f6eddc);border-color:#8e765a;box-shadow:0 2px 0 #a48c70,0 5px 9px #111b1640,inset 0 0 0 3px #fffdf7,inset 0 0 0 4px #d3b996}
+
+/* El jugador ocupa el cuarto lado del mismo tapete. */
+.cards-table{grid-template-areas:'. top .' 'left center right' 'hand hand hand'}
+.cards-your-hand{grid-area:hand;margin:8px 0 0;padding:12px;border:1px solid #b7d1b680;border-radius:12px;background:#102f25d9;color:#fffdf1;min-width:0}.cards-your-hand h3{color:#fff6dd}.cards-your-hand>p{color:#f8f2df}.cards-hand{max-width:900px;margin:auto}.cards-hand.mus-hand{margin:10px auto 0}
+@media(max-width:680px){.cards-table{grid-template-areas:'left top right' 'center center center' 'hand hand hand'}.cards-your-hand{padding:10px 7px}}
