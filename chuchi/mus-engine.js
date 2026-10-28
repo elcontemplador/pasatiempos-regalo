@@ -85,7 +85,7 @@ export function legalActions(s){
  if(s.phase==='mus')return [{type:'mus',label:'Mus · cambiar cartas'},{type:'cut',label:'No hay mus'}];
  if(s.phase==='discard')return [{type:'discard',label:'Cambiar cartas'}];
  if(s.phase!=='bet')return [];
- if(!s.pending)return [{type:'pass',label:'Paso'},{type:'bet',amount:2,label:'Envido · 2 tantos'},{type:'ordago',label:'Órdago'}];
+ if(!s.pending)return [{type:'pass',label:'Paso'},{type:'bet',amount:2,label:'Envido · 2 tantos'},{type:'ordago',label:'Órdago'},...[5,10].map(amount=>({type:'bet',amount,label:`Envido · ${amount} tantos`}))];
  return [{type:'accept',label:s.pending.ordago?'Quiero el órdago':'Quiero · '+s.pending.amount+' tantos'},{type:'reject',label:'No quiero'},...(!s.pending.ordago?[2,5,10].map(amount=>({type:'raise',amount,label:`Subir ${amount} · total ${s.pending.amount+amount}`})):[]),...(!s.pending.ordago?[{type:'ordago',label:'Órdago'}]:[])];
 }
 function canonical(s,a){
@@ -198,5 +198,5 @@ export function explain(s){
  if(s.phase==='discard')return {title:s.turn===0?'Tu descarte':'Descarta '+NAMES[s.turn],help:s.turn===0?'Selecciona las cartas que quieres cambiar y confirma. Puedes conservar las cuatro.':'El ordenador decide qué cartas cambiar. Tu mano permanece visible.'};
  const title=label(s.lance),own=s.turn===0?'Te toca':'Turno de '+NAMES[s.turn];
  if(s.pending)return {title,help:`${own}. ${s.pending.ordago?'Hay un órdago: se decide toda la partida.':`Hay ${s.pending.amount} tantos propuestos. El no vale ${s.pending.previous||1}.`}${s.pending.declined.length?' El primer no no cierra la respuesta de la pareja.':''}`};
- return {title,help:`${own}. Puedes pasar, envidar dos tantos o lanzar un órdago.${s.lance==='pares'||s.lance==='juego'?' Solo participan quienes han declarado que tienen.':''}`};
+ return {title,help:`${own}. Puedes pasar, envidar 2, 5 o 10 tantos, o lanzar un órdago.${s.lance==='pares'||s.lance==='juego'?' Solo participan quienes han declarado que tienen.':''}`};
 }

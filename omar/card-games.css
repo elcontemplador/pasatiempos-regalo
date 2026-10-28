@@ -54,3 +54,9 @@
 
 /* El resumen claro necesita texto oscuro también dentro del tapete. */
 .cards-arena .cards-round-result{color:var(--ink,#26332e)}
+
+/* Último anuncio de cada jugador, visible junto a su asiento. */
+.cards-speech{display:inline-block;max-width:100%;margin-top:4px;padding:3px 6px;border-radius:7px;background:#fff6d9;color:#283d30;font-size:.75rem;font-weight:750;line-height:1.2;text-align:center;overflow-wrap:anywhere}.cards-speech-own{margin:2px 0 5px}.cards-zoom-slot .cards-speech{font-size:.7rem}
+
+/* La mano de tute cabe en dos filas táctiles en teléfonos. */
+@media(max-width:680px){.cards-hand:not(.mus-hand){display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;overflow:visible;padding:5px 1px}.cards-hand:not(.mus-hand) .spanish-card{width:100%;height:auto;aspect-ratio:62/96;min-width:44px;min-height:68px}.cards-zoom-slot .cards-hand:not(.mus-hand) .spanish-card{height:auto}.cards-hand-scroll-help{display:none!important}}
