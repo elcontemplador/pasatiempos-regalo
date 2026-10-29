@@ -7,3 +7,5 @@ body{background:var(--page)}
 
 /* Monograma provisional y tablero integrado en la paleta. */
 .monogram{display:grid;place-items:center;background:#f1dcd5;color:#8d273a;font:700 2.5rem/1 Georgia,serif}.word-grid{background:#f0dfda;border-color:#d3b9b3}.letter:not(.found){color:#3c2b30}.letter:hover{background:#f8ece9}.word-check{border-color:#c7a9a6}
+
+.personal-dedication{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:-9px 0 24px;padding:16px 20px;border-left:3px solid #8d273a;background:#fffdfa;color:#2c2528;font-size:1rem;line-height:1.55}.personal-dedication p{margin:0}.personal-dedication .dedication-signature{margin-top:6px;color:#706064;font-size:.9rem;font-weight:650}.personal-dedication button{flex:none;min-width:44px;min-height:44px;padding:0;border:1px solid #c9a9a6;border-radius:3px;background:#fffdfa;color:#2c2528;font-size:1.5rem;line-height:1}.personal-dedication button:focus-visible{outline:3px solid #b26000;outline-offset:2px}@media(max-width:680px){.personal-dedication{margin:-2px 0 18px;padding:13px 15px;font-size:.95rem}}
