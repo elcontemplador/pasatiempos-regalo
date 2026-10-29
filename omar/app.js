@@ -198,14 +198,18 @@ $('surprise').addEventListener('click',()=>{
  switchMode(next);updateMobileNav();const heading=$(next==='words'?'word-title':next==='puzzle'?'puzzle-title':next==='quiz'?'quiz-title':next==='letters'?'letters-title':next+'-title');if(mobileLayout.matches)mobileGoTo(heading);else{heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'start'});}say(`Te propongo: ${title}. ¡A disfrutar!`);
 });
 
-// La bienvenida se oculta al empezar a jugar o al cerrarla.
+// Mostrar una sola vez por navegador y permitir releer la dedicatoria.
 const welcome=$('personal-welcome');
 if(welcome){
- const key='regalo-omar-welcome-dismissed-v1';let dismissed=false;
- try{dismissed=sessionStorage.getItem(key)==='1';}catch{}
- welcome.hidden=dismissed;
- const dismiss=()=>{welcome.hidden=true;try{sessionStorage.setItem(key,'1');}catch{}};
+ const key='regalo-omar-welcome-seen-v1',legacy='regalo-omar-welcome-dismissed-v1',opener=$('open-personal-welcome');let seen=false;
+ try{seen=localStorage.getItem(key)==='1';}catch{}
+ try{seen=seen||sessionStorage.getItem(legacy)==='1';}catch{}
+ const remember=()=>{try{localStorage.setItem(key,'1');}catch{}try{sessionStorage.setItem(legacy,'1');}catch{}};
+ const show=()=>{welcome.hidden=false;opener.setAttribute('aria-expanded','true');};
+ const dismiss=()=>{welcome.hidden=true;opener.setAttribute('aria-expanded','false');remember();};
+ if(!seen){show();remember();}else remember();
+ opener.addEventListener('click',()=>{show();welcome.scrollIntoView({block:'start'});$('close-personal-welcome').focus({preventScroll:true});});
  $('close-personal-welcome').addEventListener('click',()=>{dismiss();$('tab-words').focus({preventScroll:true});});
- document.querySelectorAll('.game-tab').forEach(button=>button.addEventListener('click',dismiss));
- $('surprise').addEventListener('click',dismiss);
+ document.querySelectorAll('.game-tab').forEach(button=>button.addEventListener('click',()=>{if(!welcome.hidden)dismiss();}));
+ $('surprise').addEventListener('click',()=>{if(!welcome.hidden)dismiss();});
 }
