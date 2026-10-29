@@ -197,3 +197,15 @@ $('surprise').addEventListener('click',()=>{
  }else if(next==='quiz')title=quiz.surprise();else if(next==='letters')title=letters.surprise();else if(next==='parejas')title='Parejas de fotos';else title={chess:'Una partida de ajedrez',domino:'Dominó por parejas',tute:'Una partida de tute',mus:'Una partida de mus'}[next];
  switchMode(next);updateMobileNav();const heading=$(next==='words'?'word-title':next==='puzzle'?'puzzle-title':next==='quiz'?'quiz-title':next==='letters'?'letters-title':next+'-title');if(mobileLayout.matches)mobileGoTo(heading);else{heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'start'});}say(`Te propongo: ${title}. ¡A disfrutar!`);
 });
+
+// La bienvenida se oculta al empezar a jugar o al cerrarla.
+const welcome=$('personal-welcome');
+if(welcome){
+ const key='regalo-omar-welcome-dismissed-v1';let dismissed=false;
+ try{dismissed=sessionStorage.getItem(key)==='1';}catch{}
+ welcome.hidden=dismissed;
+ const dismiss=()=>{welcome.hidden=true;try{sessionStorage.setItem(key,'1');}catch{}};
+ $('close-personal-welcome').addEventListener('click',()=>{dismiss();$('tab-words').focus({preventScroll:true});});
+ document.querySelectorAll('.game-tab').forEach(button=>button.addEventListener('click',dismiss));
+ $('surprise').addEventListener('click',dismiss);
+}

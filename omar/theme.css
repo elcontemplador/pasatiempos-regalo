@@ -10,4 +10,6 @@ body{background:var(--page)}
 .monogram{display:grid;place-items:center;background:#4d6552;color:#f9e5c7;font:700 2rem/1 system-ui,sans-serif}.word-grid{background:#dbe4d8;border-color:#a9b9a7}.letter:not(.found){color:#263b2e}.letter:hover{background:#ebf2e9}.word-check{border-color:#a8bda8}
 
 
-.personal-dedication{margin:-9px 0 24px;padding:16px 20px;border-left:3px solid #ad4f2d;border-radius:0 10px 10px 0;background:#fffefa;color:#26332e;font-size:1rem;line-height:1.55}.personal-dedication p{margin:0}.personal-dedication .dedication-signature{margin-top:6px;color:#58655d;font-size:.9rem;font-weight:650}@media(max-width:680px){.personal-dedication{margin:-2px 0 18px;padding:13px 15px;font-size:.95rem}}
+.personal-dedication{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:-9px 0 24px;padding:16px 20px;border-left:3px solid #ad4f2d;border-radius:0 10px 10px 0;background:#fffefa;color:#26332e;font-size:1rem;line-height:1.55}.personal-dedication p{margin:0}.personal-dedication .dedication-signature{margin-top:6px;color:#58655d;font-size:.9rem;font-weight:650}@media(max-width:680px){.personal-dedication{margin:-2px 0 18px;padding:13px 15px;font-size:.95rem}}
+
+.personal-dedication button{flex:none;min-width:44px;min-height:44px;padding:0;border:1px solid #acbbac;border-radius:8px;background:#fffefa;color:#26332e;font-size:1.5rem;line-height:1}.personal-dedication button:focus-visible{outline:3px solid #b26000;outline-offset:2px}
